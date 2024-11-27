@@ -1,0 +1,352 @@
+body {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #374151;
+    background-color: #f2f4f6;
+}
+
+
+.sidebar {
+    display: block;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    max-height: 100%;
+    overflow-y: auto;
+    width: 100%;
+    transition: max-width .1s;
+}
+
+  
+@media (max-width: 767.98px) {
+    .sidebar {
+      width: 100%;
+      max-width: 260px;
+    }
+}
+
+@media (max-width: 992px) {
+    .d-lg-block {
+      display: block!important;
+    }
+}
+
+.bg-gray-800 {
+    background-color: #1f2937!important;
+}
+
+.text-white {
+    color: #fff!important;
+}
+
+.text-white, .text:hover {
+    color: #fff!important;
+}
+
+.navbar {
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .1);
+}
+  
+@media (min-width: 767.98px) {
+    .navbar {
+      top: 0;
+      position: sticky;
+      z-index: 999;
+    }
+}
+  
+.sidebar .nav-link {
+    color: #333;
+}
+  
+.sidebar .nav-link.active {
+    color: #0d6efd;
+}
+
+.card-header {
+    background-color: transparent;
+}
+
+.card-footer {
+    background-color: transparent;
+}
+
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-accent-bg: transparent;
+    --bs-table-striped-color: #374151;
+    --bs-table-striped-bg: rgba(17, 24, 39, 0.05);
+    --bs-table-active-color: #374151;
+    --bs-table-active-bg: rgba(17, 24, 39, 0.1);
+    --bs-table-hover-color: #374151;
+    --bs-table-hover-bg: rgba(17, 24, 39, 0.075);
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #374151;
+    vertical-align: top;
+    border-color: #e5e7eb;
+}
+
+table {
+    caption-side: bottom;
+    border-collapse: collapse;
+}
+
+.fw-normal {
+    font-weight: 400!important;
+}
+.fw-bold {
+    font-weight: 500!important;
+}
+
+.card {
+    position: relative;
+}
+
+.card .table {
+    margin-bottom: 0;
+}
+
+.card-footer:last-child {
+    border-radius: 0 0 0.4375rem 0.4375rem;
+}
+
+.border-0 {
+    border: 0!important;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.mb-0 {
+    margin-bottom: 0!important;
+}
+
+.pagination {
+    display: flex;
+    padding-left: 0;
+    list-style: 0;
+}
+
+.visually-hidden {
+    position: absolute!important;
+    width: 1px!important;
+    height: 1px!important;
+    padding: 0!important;
+    margin: -1px!important;
+    overflow: hidden!important;
+    clip: rect(0,0,0,0)!important;
+    white-space: nowrap!important;
+    border: 0!important;
+}
+
+
+
+.icon {
+    height: 2rem;
+}
+
+.icon.icon-sm {
+    height: 1.5rem;
+}
+.icon.icon-xs {
+    height: 1.25rem;
+}
+
+svg {
+    vertical-align: middle;
+}
+
+.page-item.active .page-link {
+    z-index: 3;
+    color: #fff;
+    background-color: #1f2937;
+    border-color: #1f2937;
+}
+
+.page-item:not(:first-child) .page-link {
+    margin-left: -0.0625rem;
+}
+
+ul {
+    display: block;
+    list-style-type: disc;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-inline-start: 40px;
+}
+
+.page-link {
+    padding: 0.375rem 0.75rem;
+}
+
+.page-link {
+    position: relative;
+    display: block;
+    color: #1f2937;
+    background-color: #fff;
+    border: 0.0625rem solid #9ca3af;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.text-action {
+    color: #1f2937;
+    transition: all .2s ease;
+}
+
+a {
+    color: #1f2937;
+    text-decoration: none;
+}
+
+.dropdown-menu-start {
+    --bs-position: start;
+}
+
+.d-flex {
+    display: flex!important;
+}
+
+.dropdown-menu .dropdown-header, .dropdown-menu .dropdown-item {
+    padding: 0.5rem 1rem;
+    font-size: .875rem;
+}
+
+.dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 0.35rem 1rem;
+    clear: both;
+    font-weight: 400;
+    color: #111827;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-toggle-split {
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+}
+
+.dropdown-toggle {
+    white-space: nowrap;
+}
+
+.dropdown-menu .dropdown-item {
+    transition: all .2s ease;
+    font-weight: 400;
+}
+
+.input-group {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 100%;
+}
+
+.modal-custom .modal-dialog{
+    max-width: 800px;
+    margin: 100px auto 0;
+}
+
+label {
+    display: inline-block;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    font-size: .875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #6b7280;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 0.0625rem solid #d1d5db;
+    appearance: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,.07);
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+button, input, optgroup, select, textarea {
+    margin: 0;
+    font-family: inherit;
+}
+
+
+.btn {
+    display: inline-block;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #374151;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+    background-color: transparent;
+    border: 0.0625rem solid transparent;
+    padding: 0.5rem 1rem;
+    font-size: .875rem;
+    border-radius: 0.5rem;
+    transition: color .15s ease-in-out, background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.btn-group, .btn-group-vertical {
+    position: relative;
+    display: inline-flex;
+    vertical-align: middle;
+}
+
+.btn-gray-800 {
+    color: #fff;
+    background-color: #1f2937;
+    border-color: #1f2937;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 1px 1px rgba(17,24,39,.075);
+}
+
+.btn-gray-800:hover {
+    color: #fff;
+    background-color: #333;
+}
+
+.btn-link {
+    font-weight: 400;
+    color: #1f2937;
+    text-decoration: none;
+}
+
+.p-1{
+    padding: 0.25rem!important;
+}
+
+.m-0{
+    margin: 0!important;
+}
+
+.me-lg-3{
+    margin-right: 1rem!important;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem!important;
+}
+

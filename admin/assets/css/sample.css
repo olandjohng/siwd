@@ -1,0 +1,50 @@
+body {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    margin: 0;
+    background: #fff;
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1100px;
+    width: 100%;
+    padding: 20px;
+    overflow-x: auto; /* Ensures the container can scroll horizontally */
+}
+
+.table-responsive {
+    overflow-x: auto;
+    display: block;
+    width: 100%;
+}
+
+#billingReportTable {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+#billingReportTable th, #billingReportTable td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #ddd;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+#billingReportTable th {
+    background-color: #f2f2f2;
+}
+
+#billingReportTable tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+#billingReportTable tr:hover {
+    background-color: #f1f1f1;
+}
