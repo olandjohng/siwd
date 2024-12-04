@@ -25,9 +25,14 @@ include('includes/header.php');
 
         $billing = getBillingId($billing_id);
 
-        if($billing) {
+        //get the total partial paid amount 
+        $partial_paid_amount = (int) getPartiaPaid($billing_id);
 
-       ?>
+        // get all of the paid partial amount list
+        $get_partial_list = getPartialPaidList($billing_id); 
+
+        if($billing) { 
+?>
 <div class="row justify-content-center">
     <div class="col-md-10">
         <div class="card px-3">
@@ -85,7 +90,7 @@ include('includes/header.php');
                         $last_receipt_number = max($latest_payment_number, $latest_other_payment_number, $latest_refund_payment_number);
 
                         $new_number = str_pad($last_receipt_number + 1, 6, '0', STR_PAD_LEFT);
-
+                        
                         $receipt_number = $new_number;
                     ?>
 
@@ -196,6 +201,7 @@ include('includes/header.php');
 
                     <!--Partial-->
                     <div class="form-group">
+                        <input type="hidden" value="<?php ?>"/>
                         <form action="code.php" method="POST" id="partialPaymentForm" style="display: none;">
                             <div class="row g-3">
                                 <div class="col-md-6 mb-4">
@@ -213,7 +219,7 @@ include('includes/header.php');
                                     <label for="total_amount_due">Total Amount Due</label>
                                     <div class="input-group">
                                         <span class="input-group-text">₱</span>
-                                        <input type="number" class="form-control" name="total_amount_due2" id="total_amount_due2" value="<?= $billing['discounted_total']; ?>" readonly>
+                                        <input type="number" class="form-control" name="total_amount_due2" id="total_amount_due2" value="<?= ( (int)$billing['discounted_total'] - $partial_paid_amount); ?>" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-3" style="display: none;">
@@ -226,6 +232,11 @@ include('includes/header.php');
                                     <div class="input-group">
                                         <span class="input-group-text">₱</span>
                                         <input type="number" class="form-control" name="partial_amount" id="partial_amount" inputmode="decimal" step="0.01" min="0" pattern="^\d+(?:\.\d{0,2})?$" required>
+                                        <button class="btn btn-info" type="button" data-bs-toggle="modal" data-bs-target="#partial-payment-list-modal">
+                                            <svg class="w-[17px] h-[17px] text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M10 12v1h4v-1m4 7H6a1 1 0 0 1-1-1V9h14v9a1 1 0 0 1-1 1ZM4 5h16a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
+                                            </svg>
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="col-md-12 mb-3">
@@ -275,6 +286,46 @@ include('includes/header.php');
                                         </div>
                                         <div class="modal-footer">
                                             <button type="submit" class="btn btn-primary" name="add_partial_btn">Submit Payment</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Partial Payment List Modal -->
+                            <div class="modal fade" id="partial-payment-list-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">New message</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <table class="table table-striped table-sm">
+                                                <?php if(!$get_partial_list) { ?>
+                                                    <thead>
+                                                        <th>No Available Partial Payment</th>
+                                                    </thead>
+                                                <?php } else { ?>
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">Payment Amount</th>
+                                                            <th scope="col">Date</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php foreach ($get_partial_list as $partial) { ?>
+                                                            <tr>
+                                                                <td><?= $partial['amount_received']; ?></td>
+                                                                <td><?= $partial['payment_date']; ?></td>
+                                                            </tr>
+                                                        <?php } ?>
+                                                    </tbody>
+                                                    
+                                                <?php } ?>
+
+                                            </table>
+                                        </div>
+                                        <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                         </div>
                                     </div>

@@ -11,7 +11,9 @@ include('../middleware/adminMiddleware.php');
     <link rel="stylesheet" href="assets/css/volt.css">
 </head>
 <?php
-$payments = getPayment();
+    $payments = getPayment();
+
+
 ?>
 <style>
     .contentt {
@@ -77,7 +79,8 @@ $payments = getPayment();
                                 $payment_date = htmlspecialchars(date('M d Y', strtotime($row['payment_date'])));
                                 $payment_purpose = htmlspecialchars($row['payment_purpose']);
                                 // $amount = htmlspecialchars($row['amount']);
-                                $billing_amount = htmlspecialchars($row['discounted_billing']);
+                                // $billing_amount = htmlspecialchars($row['discounted_billing']);
+                                $billing_amount = $row['discounted_billing'] ?? null;
                                 $payment_method = htmlspecialchars($row['payment_method']);
                                 $arrears = htmlspecialchars($row['arrears']);
                                 $surcharge = htmlspecialchars($row['surcharge']);
