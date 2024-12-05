@@ -12,6 +12,8 @@ $total_monthlySales = getMonthlySales();
 
 $users = getAll('users');
 $payments = getPayment();
+
+
 ?>
     
 
@@ -203,7 +205,7 @@ $payments = getPayment();
                                     $id = $row['payment_id'];
                                     $purpose = $row['payment_purpose'];
 
-                                    if ($row['status'] === 'Partially Paid') {
+                                    if ($row['status'] && $row['status'] === 'Partially Paid') {
                                         $amount = htmlspecialchars($row['amount_received']);
                                     } else {
                                         $amount = htmlspecialchars($row['amount']);

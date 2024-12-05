@@ -2,8 +2,8 @@
 
 $host = "localhost";
 $username = "root";
-$password = "root";
-$database = "db_siwd";
+$password = "";
+$database = "siwd";
 
 $conn = mysqli_connect($host, $username, $password, $database);
 

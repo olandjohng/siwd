@@ -3,6 +3,8 @@ include('../middleware/adminMiddleware.php');
 include('includes/header.php');
 
 $billing = getBilling();
+
+
 ?>
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
@@ -50,7 +52,7 @@ $billing = getBilling();
                                 
                                 // Sort the billing array by billing number in descending order
                                 usort($billing, function ($a, $b) {
-                                    return $b['billing_num'] - $a['billing_num'];
+                                    return $b['billing_num'] > $a['billing_num'];
                                 });
 
                                 $current_date = date('Y-m-d'); // Get the current date in 'Y-m-d' format
