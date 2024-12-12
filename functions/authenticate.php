@@ -5,6 +5,7 @@ include('../config/db-con.php');
 
 if(isset($_POST['login_btn']))
 {
+    // validate this input
     $username = $_POST['username'];
     $password = $_POST['password'];
 

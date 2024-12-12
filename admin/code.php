@@ -258,6 +258,7 @@ else if(isset($_POST['add_partial_btn']))
             INSERT INTO payments (billing_id, or_num, payment_method, payment_date, payment_purpose, amount_due, amount_received, note)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ";
+        
         $stmt = mysqli_prepare($conn, $insert_payment_query);
         mysqli_stmt_bind_param($stmt, 'issssdds', $billing_id, $or_num, $payment_method, $payment_date, $payment_purpose, $amount_due, $amount_received, $note);
 
