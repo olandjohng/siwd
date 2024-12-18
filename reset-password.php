@@ -1,98 +1,80 @@
 <?php
 session_start();
 
-if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
-    header("location: login.php");
-    exit;
+include('includes/header.php');
+
+if(!$_SESSION['username']) {
+  header("Location: ./404.php");
+  exit();
 }
 
-require_once "config.php";
 
-$new_password = $confirm_password = "";
-$new_password_err = $confirm_password_err = "";
-
-if($_SERVER["REQUEST_METHOD"] == "POST"){
-
-    if(empty(trim($_POST["new_password"]))){
-        $new_password_err = "Please enter the new password.";
-    } elseif(strlen(trim($_POST["new_password"])) < 6){
-        $new_password_err = "Password must have atleast 6 characters.";
-    } else {
-        $new_password = trim($_POST["new_password"]);
-    }
-
-    if(empty(trim($_POST["confirm_password"]))) {
-        $confirm_password_err = "Please confirm the password.";
-    } else {
-        $confirm_password = trim($_POST["confirm_password"]);
-        if(empty($new_password_err) && ($new_password != $confirm_password)){
-            $confirm_password_err = "Password did not match.";
-        }
-    }
-
-    if(empty($new_password_err) && empty($confirm_password_err)){
-
-        $sql = "UPDATE users SET password = ? WHERE id = ?";
-        
-        if($stmt = mysqli_prepare($link, $sql)){
-            mysqli_stmt_bind_param($stmt, "si", $param_password, $param_id);
-
-            $param_password = password_hash($new_password, PASSWORD_DEFAULT);
-            $param_id = $_SESSION["id"];
-
-            if(mysqli_stmt_execute($stmt)){
-                session_destroy();
-                header("location: login.php");
-                exit();
-            } else {
-                echo "Oops! Something went wrong. Please try again.";
-            }
-
-            mysqli_stmt_close($stmt);
-        }
-    }
-
-    mysqli_close($link);
-}
 ?>
-
-<!DOCTYPE html>
-<html lang=en>
-<head>
-    <meta charset="UTF-8">
-    <title>Reset Password</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        body {
-            font: 14px;
-        }
-        .wrapper {
-            width: 360px;
-            padding: 20px;
-        }
-    </style>
-</head>
-<body>
-    <div class="wrapper">
-        <h2>Reset Password</h2>
-        <p>Please fill this form to reset your password.</p>
-        <form action = "<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-            <div class="form-group">
-                <label for="new_password">New Password</label>
-                <input type="password" id="new_password" name="new_password" class="form-control <?php echo (!empty($new_password_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $new_password; ?>">
-                <span class="invalid-feedback"><?php echo $new_password_err; ?></span>
+<section class="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
+  <div class="container">
+    <div class="row justify-content-center form-bg-image">
+      <div class="col-12 d-flex align-items-center justify-content-center">
+        <div class="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
+          <div class="text-center text-md-center mb-4 mt-md-0">
+              <?php if(isset($_SESSION['_flush']['message'])) : ?>
+                <div class="alert alert-warning alert-dismissable fade show" role="alert">
+                    <strong>Oops!</strong> <?= $_SESSION['_flush']['message']; ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" arial-label="Close"></button>
+                </div>
+              <?php endif ?>
+            <h1 class="mb-0 h3">Forgot Password</h1>
+          </div>
+          <form action="functions/reset_password.php" method="POST" class="mt-4">
+            <div class="form-group mb-4">
+              <label for="username">Username</label>
+              <div class="input-group">
+                <span class="input-group-text" id="basic-addon1">
+                  <svg class="icon icon-xs text-gray-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                  </svg>
+                </span>
+                <?php if(isset($_SESSION['username'])) : ?>
+                  <input type="text" readonly value="<?= trim($_SESSION['username']) ?>" class="form-control" id="username" name="username" placeholder="Username" autofocus required>
+                <?php else : ?>
+                  <input type="text" class="form-control" id="username" name="username" placeholder="Username" autofocus required>
+                <?php endif ?>
+              </div>
             </div>
             <div class="form-group">
-                <label for="confirm_password">Confirm Password</label>
-                <input type="password" id="confirm_password" name="confirm_password" class="form-control <?php echo (!empty($confirm_password_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $confirm_password; ?>">
-                <span class="invalid-feedback"><?php echo $confirm_password_err; ?></span>
+              <div class="form-group mb-4">
+                <label for="password">Password</label>
+                <div class="input-group">
+                  <span class="input-group-text" id="basic-addon2">
+                    <svg class="icon icon-xs text-gray-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+                    </svg>
+                  </span>
+                  <input type="password" placeholder="Password" name="password" class="form-control" id="password" required>
+                </div>
+              </div>
             </div>
             <div class="form-group">
-                <input type="submit" class="btn btn-primary" value="Submit">
-                <a class="btn btn-link ml-2" href="welcome.php">Cancel</a>
+              <div class="form-group mb-4">
+                <label for="password">New Password</label>
+                <div class="input-group">
+                  <span class="input-group-text" id="basic-addon2">
+                    <svg class="icon icon-xs text-gray-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+                    </svg>
+                  </span>
+                  <input type="password" placeholder="Password" name="new_password" class="form-control" id="password" required>
+                </div>
+              </div>
             </div>
-        </form>
+            <div class="d-grid">
+              <button type="submit" name="reset_password" class="btn btn-gray-800">Reset Password</button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
-    
-</body>
-</html>
+  </div>
+</section>
+
+<?php include('includes/footer.php'); ?>

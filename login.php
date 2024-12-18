@@ -16,9 +16,7 @@ include('includes/header.php');
                                 <strong>Oops!</strong> <?= $_SESSION['message']; ?>
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" arial-label="Close"></button>
                             </div>
-                        <?php
-                        unset($_SESSION['message']);
-                        } ?>
+                        <?php unset($_SESSION['message']); } ?>
                         <h1 class="mb-0 h3">Sign in your credentials</h1>
                     </div>
                     <form action="functions/authenticate.php" method="POST" class="mt-4">
@@ -52,7 +50,7 @@ include('includes/header.php');
                                     <label for="remember" class="form-check-label mb-0">Remember me</label>
                                 </div>
                                 <div>
-                                    <a href="reset-password.php" class="small text-right">Forgot password?</a>
+                                    <a href="" class="small text-right">Forgot password?</a>
                                 </div>
                             </div>
                         </div>

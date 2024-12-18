@@ -23,7 +23,7 @@ if(isset($_POST['login_btn']))
             } else if ($user['role'] == 3) { 
                 header("Location: ../admin/index.php");
             } else {
-                header("Location: ../default/index.php");
+                header("Location: ../cashier/index.php");
             }
             exit();
         } else {
