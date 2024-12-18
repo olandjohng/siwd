@@ -18,12 +18,20 @@ if(isset($_POST['login_btn']))
             $_SESSION['username'] = $username;
             $_SESSION['user_id'] = $user['user_id'];
 
-            if ($user['role'] == 2) { 
-                header("Location: ../cashier/index.php");
-            } else if ($user['role'] == 3) { 
-                header("Location: ../admin/index.php");
-            } else {
-                header("Location: ../default/index.php");
+            // if ($user['role'] == 2) { 
+            //     header("Location: ../cashier/index.php");
+            // } else if ($user['role'] == 3) { 
+            //     header("Location: ../admin/index.php");
+            // } else {
+            //     header("Location: ../cashier/index.php");
+            // }
+            switch($user['role']) {
+                case 3:
+                    header("Location: ../admin/index.php");
+                    break;
+                default:
+                    header("Location: ../cashier/index.php");
+                    break;
             }
             exit();
         } else {
