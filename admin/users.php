@@ -41,6 +41,8 @@ $users = getAll('users');
                                         <option value="1">Staff</option>
                                         <option value="2">Cashier</option>
                                         <option value="3">Admin</option>
+                                        <option value="4">Billing</option>
+                                        <option value="5">Report</option>
                                     </select>
                                 </div>
                                 <div class="form-group mb-4">

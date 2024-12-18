@@ -48,9 +48,6 @@ if(isset($_POST['reset_password'])){
     case 3 : 
       header("Location: ../admin/index.php");
       break;
-    case 2 : 
-      header("Location: ../cashier/index.php");
-      break;
     default : 
         header("Location: ../cashier/index.php");
       break;
