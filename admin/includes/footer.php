@@ -223,8 +223,7 @@
     var consumptionByZone = <?php echo json_encode(getConsumptionByZone()) ?>;    
 
     var zoneLabels = ['1A', '1B', '2', '3', '4A', '4B', '5', '6A', '6B', '7','7A','7B', '8', '9', '10', '11', '12'];
-    const zone_categories = zoneLabels.map(function(zoneLabel) { return 'Z ' + zoneLabel.toUpperCase();})
-    console.log(zone_categories)
+    const zone_categories = zoneLabels.map(zoneLabel => 'Z ' + zoneLabel.toUpperCase())
     var dataByZone = zoneLabels.map(function(zoneLabel) {
         return consumptionByZone[zoneLabel] || 0;
     });
@@ -237,6 +236,9 @@
             type: 'bar',
             width: "100%",
             height: 260,
+            toolbar : {
+                show : false
+            }
             // sparkline: {
             //     enabled: true
             // }
@@ -248,11 +250,12 @@
             }
         },
         dataLabels: {
-            enabled: true
+            enabled: true,
+            offsetY: 3,
         },
         plotOptions: {
             bar: {
-                columnWidth: '25%',
+                columnWidth: '30%',
                 borderRadius: 5,
                 radiusOnLastStackedBar: true,
                 horizontal: false,
@@ -267,9 +270,13 @@
         // labels: zoneLabels,
         xaxis: {
             categories: zone_categories,
+            position: 'top',
             // crosshairs: {
             //     width: 1
             // },
+        },
+        yaxis : {
+            show: false,
         },
         tooltip: {
             fillSeriesColor: false,
