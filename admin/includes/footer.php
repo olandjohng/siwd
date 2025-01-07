@@ -222,7 +222,7 @@
 <script>
     var consumptionByZone = <?php echo json_encode(getConsumptionByZone()) ?>;    
 
-    var zoneLabels = ['1A', '1B', '2', '3', '4A', '4B', '5', '6A', '6B', '7','7A','7B', '8', '9', '10', '11', '12'];
+    var zoneLabels = ['1A', '1B', '2', '3', '4A', '4B', '5', '6A', '6B','7A','7B', '8', '9', '10', '11', '12'];
     const zone_categories = zoneLabels.map(zoneLabel => 'Z ' + zoneLabel.toUpperCase())
     var dataByZone = zoneLabels.map(function(zoneLabel) {
         return consumptionByZone[zoneLabel] || 0;
