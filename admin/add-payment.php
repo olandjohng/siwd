@@ -24,12 +24,14 @@ include('includes/header.php');
         $billing_id = $_GET['id'];
 
         $billing = getBillingId($billing_id);
-
-        //get the total partial paid amount 
+        echo '<pre>';
+        print_r($billing);
+        echo '</pre>';
         $partial_paid_amount = (int) getPartiaPaid($billing_id);
 
-        // get all of the paid partial amount list
         $get_partial_list = getPartialPaidList($billing_id); 
+        
+        $isDue = new DateTime($billing['due_date']) < new DateTime();
 
         if($billing) { 
 ?>
@@ -49,7 +51,9 @@ include('includes/header.php');
                                 <label for="payment_method">Payment Method</label>
                                 <select name="payment_method" id="payment_method" class="form-select">
                                     <option value="Cash">Cash</option>
-                                    <option value="Partial">Partial</option>
+                                        <?php if(!$isDue) : ?>
+                                            <option value="Partial">Partial</option>
+                                        <?php endif ?>
                                     <option value="Check">Bank Check</option>
                                 </select>
                             </div>

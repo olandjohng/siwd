@@ -284,10 +284,10 @@ include('includes/header.php');
 
                 $('#wqi_fee').val(parseFloat($('#wqi_fee').val()) + wqiFee);
                 $('#wm_fee').val(parseFloat($('#wm_fee').val()) + wmFee);
-
                 $('#arrears').val(billingAmount.toFixed(2));
-
-                calculateSurcharge();
+                $("#surcharge").val((parseFloat(billingAmount.toFixed(2)) * 0.10).toFixed(2))
+ 
+                $('#search-results').html('');
             }
 
             $('#search-results').html('');
@@ -379,7 +379,6 @@ include('includes/header.php');
 
         function calculateSurcharge() {
             var arrears = parseFloat(document.getElementById('arrears').value);
-            
             if (!isNaN(arrears)) {
                 var surcharge = arrears * 0.10;
 

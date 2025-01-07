@@ -222,12 +222,11 @@
 <script>
     var consumptionByZone = <?php echo json_encode(getConsumptionByZone()) ?>;    
 
-    var zoneLabels = ['1A', '1B', '2', '3', '4A', '4B', '5', '6A', '6B', '7', '8', '9', '10', '11', '12'];
-
+    var zoneLabels = ['1A', '1B', '2', '3', '4A', '4B', '5', '6A', '6B', '7','7A','7B', '8', '9', '10', '11', '12'];
+    const zone_categories = zoneLabels.map(zoneLabel => 'Z ' + zoneLabel.toUpperCase())
     var dataByZone = zoneLabels.map(function(zoneLabel) {
         return consumptionByZone[zoneLabel] || 0;
     });
-
     var optionsWaterConsumptionChart = {
         series: [{
             name: 'Water Consumption',
@@ -237,9 +236,12 @@
             type: 'bar',
             width: "100%",
             height: 260,
-            sparkline: {
-                enabled: true
+            toolbar : {
+                show : false
             }
+            // sparkline: {
+            //     enabled: true
+            // }
         },
         theme: {
             monochrome: {
@@ -247,9 +249,13 @@
                 color: '#31316A',
             }
         },
+        dataLabels: {
+            enabled: true,
+            offsetY: 3,
+        },
         plotOptions: {
             bar: {
-                columnWidth: '20%',
+                columnWidth: '30%',
                 borderRadius: 5,
                 radiusOnLastStackedBar: true,
                 horizontal: false,
@@ -261,14 +267,16 @@
                 },
             }
         },
-        labels: zoneLabels,
+        // labels: zoneLabels,
         xaxis: {
-            categories: zoneLabels.map(function(zoneLabel) {
-                return 'Zone ' + zoneLabel.toUpperCase();
-            }),
-            crosshairs: {
-                width: 1
-            },
+            categories: zone_categories,
+            position: 'top',
+            // crosshairs: {
+            //     width: 1
+            // },
+        },
+        yaxis : {
+            show: false,
         },
         tooltip: {
             fillSeriesColor: false,

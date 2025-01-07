@@ -86,6 +86,8 @@ include('includes/header.php');
                             <option value="6A">6A</option>
                             <option value="6B">6B</option>
                             <option value="7">7</option>
+                            <option value="7A">7A</option>
+                            <option value="7B">7B</option>
                             <option value="8">8</option>
                             <option value="9">9</option>
                             <option value="10">10</option>
