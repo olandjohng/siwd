@@ -88,7 +88,7 @@ $payments = getPayment();
             <div class="card-body">
                 <div class="row d-block d-xxl-flex align-items-center">
                     <div class="col-12 col-xxl-6 ps-xxl-4 pe-xxl-0">
-                        <h2 class="fs-6 fw-normal mb-1 text-gray-400">Daily Sales</h2>
+                        <h2 class="fs-6 fw-normal mb-1 text-gray-400">Daily Collection</h2>
                         <h3 class="fw-extrabold mb-1">₱ <?= number_format($total_todaySales, 2); ?></h3>
                         <small class="d-flex align-items-center">Total cash in for today.</small>
                     </div>
@@ -101,7 +101,7 @@ $payments = getPayment();
             <div class="card-body">
                 <div class="row d-block d-xxl-flex align-items-center">
                     <div class="col-12 col-xxl-6 ps-xxl-4 pe-xxl-0">
-                        <h2 class="fs-6 fw-normal mb-1 text-gray-400">Monthly Sales</h2>
+                        <h2 class="fs-6 fw-normal mb-1 text-gray-400">Monthly Collection</h2>
                         <h3 class="fw-extrabold mb-1">₱ <?= number_format($total_monthlySales, 2); ?></h3>
                         <small class="d-flex align-items-center">Total cash in for the month.</small>
                     </div>

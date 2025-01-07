@@ -222,12 +222,12 @@
 <script>
     var consumptionByZone = <?php echo json_encode(getConsumptionByZone()) ?>;    
 
-    var zoneLabels = ['1A', '1B', '2', '3', '4A', '4B', '5', '6A', '6B', '7', '8', '9', '10', '11', '12'];
-
+    var zoneLabels = ['1A', '1B', '2', '3', '4A', '4B', '5', '6A', '6B', '7','7A','7B', '8', '9', '10', '11', '12'];
+    const zone_categories = zoneLabels.map(function(zoneLabel) { return 'Z ' + zoneLabel.toUpperCase();})
+    console.log(zone_categories)
     var dataByZone = zoneLabels.map(function(zoneLabel) {
         return consumptionByZone[zoneLabel] || 0;
     });
-
     var optionsWaterConsumptionChart = {
         series: [{
             name: 'Water Consumption',
@@ -237,9 +237,9 @@
             type: 'bar',
             width: "100%",
             height: 260,
-            sparkline: {
-                enabled: true
-            }
+            // sparkline: {
+            //     enabled: true
+            // }
         },
         theme: {
             monochrome: {
@@ -247,9 +247,12 @@
                 color: '#31316A',
             }
         },
+        dataLabels: {
+            enabled: true
+        },
         plotOptions: {
             bar: {
-                columnWidth: '20%',
+                columnWidth: '25%',
                 borderRadius: 5,
                 radiusOnLastStackedBar: true,
                 horizontal: false,
@@ -261,14 +264,12 @@
                 },
             }
         },
-        labels: zoneLabels,
+        // labels: zoneLabels,
         xaxis: {
-            categories: zoneLabels.map(function(zoneLabel) {
-                return 'Zone ' + zoneLabel.toUpperCase();
-            }),
-            crosshairs: {
-                width: 1
-            },
+            categories: zone_categories,
+            // crosshairs: {
+            //     width: 1
+            // },
         },
         tooltip: {
             fillSeriesColor: false,
