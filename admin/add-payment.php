@@ -24,13 +24,9 @@ include('includes/header.php');
         $billing_id = $_GET['id'];
 
         $billing = getBillingId($billing_id);
-        echo '<pre>';
-        print_r($billing);
-        echo '</pre>';
-        $partial_paid_amount = (int) getPartiaPaid($billing_id);
-
+        $partial_paid_amount = (float) getPartiaPaid($billing_id);
+        print_r($partial_paid_amount);
         $get_partial_list = getPartialPaidList($billing_id); 
-        
         $isDue = new DateTime($billing['due_date']) < new DateTime();
 
         if($billing) { 
@@ -119,7 +115,7 @@ include('includes/header.php');
                                     <label for="total_amount_due">Total Amount Due</label>
                                     <div class="input-group">
                                         <span class="input-group-text">₱</span>
-                                        <input type="number" class="form-control" name="total_amount_due" id="total_amount_due" value="<?= $billing['discounted_total']; ?>" readonly>
+                                        <input type="number" class="form-control" name="total_amount_due" id="total_amount_due" value="<?= (float)$billing['discounted_total'] - $partial_paid_amount; ?>" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-3" style="display: none;">
@@ -223,7 +219,7 @@ include('includes/header.php');
                                     <label for="total_amount_due">Total Amount Due</label>
                                     <div class="input-group">
                                         <span class="input-group-text">₱</span>
-                                        <input type="number" class="form-control" name="total_amount_due2" id="total_amount_due2" value="<?= ( (int)$billing['discounted_total'] - $partial_paid_amount); ?>" readonly>
+                                        <input type="number" class="form-control" name="total_amount_due2" id="total_amount_due2" value="<?= ( (float)$billing['discounted_total'] - $partial_paid_amount); ?>" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-3" style="display: none;">
