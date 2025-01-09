@@ -25,7 +25,7 @@ function getAllClientsAsc() {
 function getBilling()
 {
     global $conn;
-    $query = "SELECT billing.*, clients.account_name, clients.account_num, clients.zone
+    $query = "SELECT billing.*, IFNULL(billing.remaining_balance, billing.discounted_total) as r_balance, clients.account_name, clients.account_num, clients.zone
             FROM billing
             JOIN clients ON billing.client_id = clients.client_id";
     $query_run = mysqli_query($conn, $query);
@@ -388,7 +388,7 @@ function getConsumptionAndBillingByZone()
     if($query_run) {
         $data = array();
 
-        $zones = array("1A", "1B", "2", "3", "4A", "4B", "5", "6A", "6B", "7", "8", "9", "10", "11", "12");
+        $zones = array("1A", "1B", "2", "3", "4A", "4B", "5", "6A", "6B", "7A", "7B", "8", "9", "10", "11", "12");
         foreach ($zones as $zone) {
             $data[$zone]['clients'] = 0;
             $data[$zone]['consumption'] = 0;
@@ -542,7 +542,7 @@ function redirect($url, $message)
 function getPartiaPaid($id) {
     global $conn;
 
-    $query = "select sum(amount_received) as partial_paid from payments where billing_id = ? and payment_method = 'Partial' group by amount_due";
+    $query = "select sum(amount_received) as partial_paid from payments where billing_id = ? and payment_method = 'Partial' group by billing_id";
 
     $stmt = mysqli_prepare($conn, $query);
 
@@ -556,8 +556,8 @@ function getPartiaPaid($id) {
 
     if(!$partial_amount) return 0;
 
+  
     return $partial_amount['partial_paid'];
-
 }
 
 

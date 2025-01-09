@@ -27,11 +27,11 @@ include('includes/header.php');
                 $new_billing_query = "SELECT billing_num FROM billing ORDER BY billing_num DESC";
                 $new_billing_query_result = mysqli_query($conn, $new_billing_query);
                 $row = mysqli_fetch_array($new_billing_query_result);
-                $lastid = $row['billing_num'];
-
-                if(empty($lastid)) {
+                // print_r($row);
+                if(empty($row)) {
                     $number = "SI-000001";
                 } else {
+                    $lastid = $row['billing_num'];
                     $idd = str_replace("SI-","",$lastid);
                     $id = str_pad($idd + 1, 6, 0, STR_PAD_LEFT);
                     $number = 'SI-' .$id;
