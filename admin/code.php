@@ -133,6 +133,11 @@ else if(isset($_POST['add_billing_btn']))
 else if(isset($_POST['add_cashpayment_btn']))
 {
     mysqli_begin_transaction($conn);
+    
+    // echo '<pre>';
+    // print_r($_POST);
+    // echo '</pre>';
+    // die;
 
     $billing_id = mysqli_real_escape_string($conn, $_POST['billing_id']);
     $or_num = mysqli_real_escape_string($conn, $_POST['or_num']);
@@ -147,7 +152,7 @@ else if(isset($_POST['add_cashpayment_btn']))
     if ($amount_received >= $amount_due) {
         $status = 'Paid';
 
-        $update_billing_query = "UPDATE billing SET status = '$status' WHERE billing_id = '$billing_id'";
+        $update_billing_query = "UPDATE billing SET status = '$status', remaining_balance = 0 WHERE billing_id = '$billing_id'";
         mysqli_query($conn, $update_billing_query);
 
         $insert_payment_query = "INSERT INTO payments (billing_id, or_num, payment_method, payment_date, payment_purpose, amount_due, amount_received, change_amount, note)
@@ -191,7 +196,7 @@ else if(isset($_POST['add_bankcheck_btn']))
     if ($amount_received >= $amount_due) {
         $status = 'Paid';
 
-        $update_billing_query = "UPDATE billing SET status = '$status' WHERE billing_id = '$billing_id'";
+        $update_billing_query = "UPDATE billing SET status = '$status', remaining_balance = 0 WHERE billing_id = '$billing_id'";
         mysqli_query($conn, $update_billing_query);
 
         $insert_check_payment_query = "INSERT INTO payments (billing_id, or_num, payment_method, payment_date, payment_purpose, amount_due, amount_received, check_number, bank_name, check_date, note)

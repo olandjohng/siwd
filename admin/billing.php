@@ -42,6 +42,7 @@ $billing = getBilling();
                             <th>Issue Date</th>
                             <th>Due Date</th>
                             <th>Total</th>
+                            <th>Balance</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -63,7 +64,7 @@ $billing = getBilling();
                                     $reading_date = date('M d, Y', strtotime($row['reading_date']));
                                     $due_date = date('Y-m-d', strtotime($row['due_date'])); // Convert due date to 'Y-m-d' format for comparison
                                     $total = $row['discounted_total'];
-                                    
+                                    $r_balance = $row['r_balance'];
                                     if ($due_date < $current_date && $row['status'] !== 'Paid' && $row['status'] !== 'Rolled Over') {
                                         $status = 'Due';
                                         $id = $row['billing_id'];
@@ -83,6 +84,7 @@ $billing = getBilling();
                             <td><?= $reading_date; ?></td>
                             <td><?= $due_date_display; ?></td>
                             <td>₱ <?= $total; ?></td>
+                            <td>₱ <?= $r_balance; ?></td>
                             <?php
                                 $status_color = '';
                                 if ($status === 'Pending') {
