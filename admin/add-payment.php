@@ -24,9 +24,6 @@ include('includes/header.php');
         $billing_id = $_GET['id'];
 
         $billing = getBillingId($billing_id);
-        echo '<pre>';
-        print_r($billing);
-        echo '</pre>';
         $partial_paid_amount = (int) getPartiaPaid($billing_id);
 
         $get_partial_list = getPartialPaidList($billing_id); 
