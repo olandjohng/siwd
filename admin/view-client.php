@@ -74,6 +74,9 @@ $client_data = mysqli_fetch_assoc($result);
                         case 3:
                             echo 'Commercial';
                             break;
+                        case 4:
+                            echo 'Government';
+                            break;
                         default:
                             echo 'Unknown';
                             break;

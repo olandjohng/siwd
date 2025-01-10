@@ -64,7 +64,7 @@ $billing = getBilling();
                                     $reading_date = date('M d, Y', strtotime($row['reading_date']));
                                     $due_date = date('Y-m-d', strtotime($row['due_date'])); // Convert due date to 'Y-m-d' format for comparison
                                     $total = $row['discounted_total'];
-                                    $r_balance = $row['r_balance'];
+                                    $r_balance = (float)$row['r_balance'];
                                     if ($due_date < $current_date && $row['status'] !== 'Paid' && $row['status'] !== 'Rolled Over') {
                                         $status = 'Due';
                                         $id = $row['billing_id'];

@@ -47,6 +47,7 @@ include('includes/header.php');
                             <option value="1">Residential</option>
                             <option value="2">Semi-Commercial</option>
                             <option value="3">Commercial</option>
+                            <option value="4">Government</option>
                         </select>
                     </div>
                     <div class="col-md-6 mb-3">

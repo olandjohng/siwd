@@ -44,6 +44,9 @@ if(mysqli_num_rows($result) > 0){?>
                     case '3':
                         $accountTypeValue = 'Commercial';
                         break;
+                    case '4':
+                        $accountTypeValue = 'Government';
+                        break;
                     default:
                         $accountTypeValue = '';
                 }
