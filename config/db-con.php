@@ -2,7 +2,7 @@
 
 $host = "localhost";
 $username = "u215434580_siwdprod";
-$password = "!Tested123";
+$password = "!LetMeIn2025";
 $database = "u215434580_siwdprod";
 
 $conn = mysqli_connect($host, $username, $password, $database);
