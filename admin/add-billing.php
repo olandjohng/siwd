@@ -343,11 +343,14 @@ include('includes/header.php');
                     case 'Commercial':
                         tableName = 'pricing_commercial';
                         break;
+                    case 'Government':
+                        tableName = 'pricing_semicom';
+                        break;
                     default:
                         console.error('Invalid account type');
                         return;
                 }
-
+                console.log(consumption)
                 $.ajax({
                     url: 'fetch_price.php',
                     method: 'POST',
@@ -371,7 +374,13 @@ include('includes/header.php');
             if (!isNaN(previousReading) && !isNaN(presentReading)) {
                 var consumption = presentReading - previousReading;
                 document.getElementById('consumption').value = consumption;
-                fetchPrice();
+                if(!isNaN(consumption) && consumption >= 51) {
+                    document.getElementById('billing_amount').value = Number(parseFloat(consumption) * 60).toFixed(2)
+                    calculateSubtotal();
+                    calculateTax();
+                } else {
+                    fetchPrice();
+                }
             } else {
                 document.getElementById('consumption').value = '';
             }

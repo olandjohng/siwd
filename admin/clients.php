@@ -87,6 +87,9 @@ $clients = getAll('clients');
                                     case 3:
                                         $account_type_display = 'Commercial';
                                         break;
+                                    case 4:
+                                        $account_type_display = 'Government';
+                                        break;
                                     default:
                                         $account_type_display = 'Unknown';
                                         break;  
