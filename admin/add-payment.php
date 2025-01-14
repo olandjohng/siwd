@@ -25,7 +25,6 @@ include('includes/header.php');
 
         $billing = getBillingId($billing_id);
         $partial_paid_amount = (float) getPartiaPaid($billing_id);
-        print_r($partial_paid_amount);
         $get_partial_list = getPartialPaidList($billing_id); 
         $isDue = new DateTime($billing['due_date']) < new DateTime();
 
@@ -115,7 +114,7 @@ include('includes/header.php');
                                     <label for="total_amount_due">Total Amount Due</label>
                                     <div class="input-group">
                                         <span class="input-group-text">₱</span>
-                                        <input type="number" class="form-control" name="total_amount_due" id="total_amount_due" value="<?= (float)$billing['discounted_total'] - $partial_paid_amount; ?>" readonly>
+                                        <input type="number" class="form-control" id="total_amount_due" value="<?= (float)$billing['discounted_total'] ?>" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-3" style="display: none;">
@@ -133,6 +132,13 @@ include('includes/header.php');
                                 
                             </div>
                             <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <label for="payment_amount">Remaining Balance</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">₱</span>
+                                        <input type="number" class="form-control"  name="total_amount_due" id="remaining_balance_preview" value="<?=(float)$billing['discounted_total'] - $partial_paid_amount; ?>" inputmode="decimal" step="0.01" min="0" pattern="^\d+(?:\.\d{0,2})?$" readonly>
+                                    </div>
+                                </div>
                                 <div class="col-md-12 mb-3">
                                     <label for="payment_amount">Payment Amount</label>
                                     <div class="input-group">
@@ -217,6 +223,13 @@ include('includes/header.php');
                             </div>
                             <div class="col-md-12 mb-3">
                                     <label for="total_amount_due">Total Amount Due</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">₱</span>
+                                        <input type="number" class="form-control" value="<?= ( (float)$billing['discounted_total'] ); ?>" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label for="total_amount_due">Remaining Balance</label>
                                     <div class="input-group">
                                         <span class="input-group-text">₱</span>
                                         <input type="number" class="form-control" name="total_amount_due2" id="total_amount_due2" value="<?= ( (float)$billing['discounted_total'] - $partial_paid_amount); ?>" readonly>
@@ -451,7 +464,7 @@ include('includes/header.php');
 <script>
     $(document).ready(function() {
         function calculateChange() {
-            var totalAmountDue = parseFloat($('#total_amount_due').val());
+            var totalAmountDue = parseFloat($('#remaining_balance_preview').val());
             var paymentAmount = parseFloat($('#payment_amount').val());
             var change = paymentAmount - totalAmountDue;
             return change.toFixed(2);
@@ -465,7 +478,8 @@ include('includes/header.php');
         }
 
         $('#payment_amount').on('input', function() {
-            var totalAmountDue = parseFloat($('#total_amount_due').val());
+            
+            var totalAmountDue = parseFloat($('#remaining_balance_preview').val());
             var paymentAmount = parseFloat($('#payment_amount').val());
             var change = calculateChange();
 
@@ -531,7 +545,7 @@ include('includes/header.php');
     $(document).ready(function() {
         $('#previewCashButton').click(function() {
             
-            $('#totalAmountPreview').text($('#total_amount_due').val());
+            $('#totalAmountPreview').text($('#remaining_balance_preview').val());
             $('#paymentAmountPreview').text($('#payment_amount').val());
             $('#changePreview').text($('#change').val());
             $('#paymentNotePreview').text($('#payment_note').val());
