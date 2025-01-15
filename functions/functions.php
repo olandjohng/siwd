@@ -43,9 +43,17 @@ function getPayment() {
     global $conn;
 
     //Fetch payments
+    // $payments_query = "
+    //     SELECT payments.payment_id, payments.or_num, payments.payment_date, payments.payment_method, payments.payment_purpose, 
+    //            billing.discounted_total AS amount, payments.amount_received, billing.billing_id, billing.billing_num, billing.billing_amount, billing.discounted_billing as discounted_billing, billing.arrears, billing.surcharge, 
+    //            billing.wqi_fee, billing.wm_fee, billing.installation_fee, billing.materials_fee, billing.tax, billing.status as status, clients.account_name, clients.account_num, 'payment' AS source
+    //     FROM payments
+    //     JOIN billing ON billing.billing_id = payments.billing_id
+    //     JOIN clients ON billing.client_id = clients.client_id
+    // ";
     $payments_query = "
         SELECT payments.payment_id, payments.or_num, payments.payment_date, payments.payment_method, payments.payment_purpose, 
-               billing.discounted_total AS amount, payments.amount_received, billing.billing_id, billing.billing_num, billing.billing_amount, billing.discounted_billing as discounted_billing, billing.arrears, billing.surcharge, 
+               ( payments.amount_received - ifnull(payments.change_amount, 0)) AS amount, payments.amount_received, billing.billing_id, billing.billing_num, billing.billing_amount, billing.discounted_billing as discounted_billing, billing.arrears, billing.surcharge, 
                billing.wqi_fee, billing.wm_fee, billing.installation_fee, billing.materials_fee, billing.tax, billing.status as status, clients.account_name, clients.account_num, 'payment' AS source
         FROM payments
         JOIN billing ON billing.billing_id = payments.billing_id

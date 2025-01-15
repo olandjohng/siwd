@@ -296,6 +296,9 @@ include('includes/header.php');
 </script>
 
 <script>
+
+    let fecth_delay = null;
+
     document.addEventListener('DOMContentLoaded', function() {
         function calculateSubtotal() {
             var fields = ['billing_amount', 'arrears', 'surcharge', 'wqi_fee', 'wm_fee', 'materials_fee', 'installation_fee'];
@@ -330,7 +333,6 @@ include('includes/header.php');
         function fetchPrice() {
             var accountType = document.getElementById('account_type').value;
             var consumption = parseFloat(document.getElementById('consumption').value);
-
             if (accountType && !isNaN(consumption)) {
                 var tableName = '';
                 switch (accountType) {
@@ -350,13 +352,15 @@ include('includes/header.php');
                         console.error('Invalid account type');
                         return;
                 }
-                console.log(consumption)
+                
+               
                 $.ajax({
                     url: 'fetch_price.php',
                     method: 'POST',
                     data: { tableName: tableName, consumption: consumption },
                     success: function(response){
-                        document.getElementById('billing_amount').value = response;
+                        
+                        document.getElementById('billing_amount').value = Number(response).toFixed(2);
                         calculateSubtotal();
                         calculateTax();
                     },
@@ -364,6 +368,7 @@ include('includes/header.php');
                         console.error(error);
                     }
                 });
+             
             }
         }
 
@@ -374,13 +379,13 @@ include('includes/header.php');
             if (!isNaN(previousReading) && !isNaN(presentReading)) {
                 var consumption = presentReading - previousReading;
                 document.getElementById('consumption').value = consumption;
-                if(!isNaN(consumption) && consumption >= 51) {
-                    document.getElementById('billing_amount').value = Number(parseFloat(consumption) * 60).toFixed(2)
-                    calculateSubtotal();
-                    calculateTax();
-                } else {
-                    fetchPrice();
-                }
+                
+                if(fecth_delay) { clearTimeout(fecth_delay) }
+            
+                calculateSubtotal();
+                calculateTax();
+                fecth_delay = setTimeout(() => fetchPrice() , 1000)
+            
             } else {
                 document.getElementById('consumption').value = '';
             }
@@ -427,7 +432,7 @@ include('includes/header.php');
             discountedBillingInput.value = discountedBilling.toFixed(2);
         }
 
-        document.getElementById('consumption').addEventListener('input', fetchPrice);
+        // document.getElementById('consumption').addEventListener('input', fetchPrice);
         document.getElementById('present_reading').addEventListener('input', updateConsumption);
         document.getElementById('previous_reading').addEventListener('input', updateConsumption);
         document.getElementById('arrears').addEventListener('input', calculateSurcharge);
