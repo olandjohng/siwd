@@ -73,7 +73,6 @@ if (isset($_GET['id']) && isset($_GET['source'])) {
     $source = $_GET['source'];
 
     $paymentId = getPaymentId($payment_id, $source);
-
     if ($paymentId) {
 ?>
 <div class="card">

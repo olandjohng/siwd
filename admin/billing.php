@@ -3,7 +3,7 @@ include('../middleware/adminMiddleware.php');
 include('includes/header.php');
 
 $billing = getBilling();
-
+// print_r($billing);
 
 ?>
 
@@ -33,12 +33,13 @@ $billing = getBilling();
 <div class="card">
     <div class="table-responsive py-4">
         <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-columns">
-            <div class="dataTable-container">
+            <div class="dataTable-container">   
                 <table class="table table-flush dataTable-table data-table" id="billingTable">
                     <thead class="thead-light">
                         <tr>
                             <th>#</th>
                             <th>Bill For</th>
+                            <th>Zone</th>
                             <th>Issue Date</th>
                             <th>Due Date</th>
                             <th>Total</th>
@@ -65,6 +66,7 @@ $billing = getBilling();
                                     $due_date = date('Y-m-d', strtotime($row['due_date'])); // Convert due date to 'Y-m-d' format for comparison
                                     $total = $row['discounted_total'];
                                     $r_balance = (float)$row['r_balance'];
+                                    $zone = $row['zone']; 
                                     if ($due_date < $current_date && $row['status'] !== 'Paid' && $row['status'] !== 'Rolled Over') {
                                         $status = 'Due';
                                         $id = $row['billing_id'];
@@ -81,6 +83,7 @@ $billing = getBilling();
                         <tr>
                             <td><?= $billing_num; ?></td>
                             <td><?= $name; ?></td>
+                            <td><?= $zone; ?></td>
                             <td><?= $reading_date; ?></td>
                             <td><?= $due_date_display; ?></td>
                             <td>₱ <?= $total; ?></td>
