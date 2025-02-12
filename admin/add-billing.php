@@ -240,12 +240,12 @@ include('includes/header.php');
         $('#client_search').on('input', function(){
             var searchQuery = $(this).val();
             if(searchQuery.trim() !== '') {
-    
                 $.ajax({
                     url: 'search.php', 
                     method: 'GET',
                     data: {query: searchQuery},
                     success: function(response){
+                       
                         $('#search-results').html(response);
                     },
                     error: function(xhr, status, error){
@@ -313,7 +313,13 @@ include('includes/header.php');
 
         function calculateTax() {
             var billingAmount = parseFloat(document.getElementById('billing_amount').value) || 0;
+
             var tax = billingAmount * 0.02;
+            if($('#arrears').val()) {
+                const arrears_tax = parseFloat($('#arrears').val()) * 0.02;
+                tax += arrears_tax
+            }
+
             document.getElementById('tax').value = tax.toFixed(2);
 
             calculateTotal();

@@ -33,9 +33,10 @@ include('../middleware/adminMiddleware.php');
         </div>
 
         <div class="card card-body shadow border-0 table-wrapper table-responsive">
-            <div class="d-flex mb-3">
+            <div class="d-flex mb-3 gap-2">
                 <input type="type" id="min" name="min" class="form-control fmxw-200" placeholder="Minimum Date">
-                <input type="type" id="max" name="max" class="form-control fmxw-200 ms-3" placeholder="Maximum Date">
+                <input type="type" id="max" name="max" class="form-control fmxw-200 " placeholder="Maximum Date">
+                <button id="clear_calendar" class="btn btn-sm btn-gray-800 d-inline-flex align-items-center">Clear</button>
             </div>
             <table id="collectionReportTable" class="table table-hover align-items-center">
                 <thead>
@@ -435,36 +436,77 @@ include('../middleware/adminMiddleware.php');
                     });
                 },
                 initComplete: function() {
-                    let minDate, maxDate;
+                    // let minDate, maxDate;
+                    
+                    // DataTable.ext.search.push(function(settings, data, dataIndex) {
+                    //     let min = minDate.val();
+                    //     let max = maxDate.val();
+                    //     let date = new Date(data[6]);
+                    //     console.log(min)
+                    //     if (
+                    //         (min === null && max === null) ||
+                    //         (min === null && date <= max) ||
+                    //         (min <= date && max === null) ||
+                    //         (min <= date && date <= max)
+                    //     ) {
+                    //         return true;
+                    //     }
+                    //     return false;
+                    // });
 
-                    DataTable.ext.search.push(function(settings, data, dataIndex) {
-                        let min = minDate.val();
-                        let max = maxDate.val();
-                        let date = new Date(data[6]);
+                    // minDate = new DateTime('#min', {
+                    //     format: 'MMMM Do YYYY'
+                    // });
+                    // maxDate = new DateTime('#max', {
+                    //     format: 'MMMM Do YYYY'
+                    // });
 
-                        if (
-                            (min === null && max === null) ||
-                            (min === null && date <= max) ||
-                            (min <= date && max === null) ||
-                            (min <= date && date <= max)
-                        ) {
-                            return true;
-                        }
-                        return false;
-                    });
-
-                    minDate = new DateTime('#min', {
-                        format: 'MMMM Do YYYY'
-                    });
-                    maxDate = new DateTime('#max', {
-                        format: 'MMMM Do YYYY'
-                    });
-
-                    document.querySelectorAll('#min, #max').forEach((el) => {
-                        el.addEventListener('change', () => table.draw());
-                    });
+                    // document.querySelectorAll('#min, #max').forEach((el) => {
+                    //     el.addEventListener('change', () => {
+                    //         table.draw()
+                    //     });
+                    // });
                 }
             });
+
+            minDate = new DateTime('#min', {
+                format: 'MMMM Do YYYY',
+                buttons: {
+                    clear: true
+                },
+                onChange : () => { filter_date() }
+            });
+            
+            maxDate = new DateTime('#max', {
+                format: 'MMMM Do YYYY',
+                buttons: {
+                    clear: true
+                },
+                onChange : () => { filter_date() }
+            });
+
+            function filter_date() {
+                if(minDate.val() && maxDate.val() == null) {
+                    table.column(6).search((rows) => { 
+                        return moment(new Date(rows)).isBetween(moment(minDate.val()).subtract(1, 'days'), undefined) 
+                    }).draw()
+                } 
+
+                if(maxDate.val() == null && maxDate.val() == null) {
+                    return
+                }
+
+                table.column(6).search((rows) =>{ 
+                   return moment(new Date(rows)).isBetween(moment(minDate.val()).subtract(1, 'days'), moment(maxDate.val())) 
+                }).draw()
+            }
+            
+            $('#clear_calendar').click(function(){
+                minDate.val(null)
+                maxDate.val(null)
+                table.column(6).search((rows) => true).draw()
+            });
+
         });
     </script>
 
