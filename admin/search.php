@@ -18,7 +18,7 @@ $searchQuery = isset($_GET['query']) ? $_GET['query'] : '';
 //         WHERE clients.account_name LIKE '%" . $conn->real_escape_string($searchQuery) ."%' OR clients.account_num LIKE '%" . $conn->real_escape_string($searchQuery) . "%'";
 
 
-$sql = "SELECT c.*, b.billing_amount, b.wqi_fee, b.wm_fee, b.present_reading, b.status 
+$sql = "SELECT c.*, (b.billing_amount + b.arrears) as billing_amount, b.wqi_fee, b.wm_fee, b.present_reading, b.status 
         FROM clients c
         LEFT JOIN billing b on b.client_id = c.client_id 
         and b.due_date = (SELECT max(due_date) FROM billing d WHERE d.client_id = b.client_id )
