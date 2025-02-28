@@ -141,11 +141,28 @@ function getPaymentId($id, $source)
     global $conn;
 
     if ($source === 'payment') {
-        $query = "SELECT payments.*, billing.*, clients.*
-                  FROM payments
-                  JOIN billing ON billing.billing_id = payments.billing_id
+        $query = "SELECT
+                billing.materials_fee, billing.installation_fee, billing.previous_reading,  billing.discount_amount,
+                billing.present_reading, billing.consumption, billing.covered_from, billing.covered_to, billing.discount_type,
+                -- (amount_received - IFNULL(change_amount, 0)) + payments.arrears as subtotal,
+                p.bill_amount,
+                p.arrears,
+                p.surcharge, 
+                p.water_qty_improvement,
+                p.water_management, 
+                p.tax, p.installation,
+                p.payment_date, p.or_num, p.payment_method,
+                (p.bill_amount + p.arrears + p.water_qty_improvement + p.water_management + p.installation + p.material) as subtotal,
+                -- (p.bill_amount + p.arrears + p.water_qty_improvement + p.water_management + p.installation + p.material + p.tax) as total,
+                
+                clients.*
+                  FROM payments p
+                  JOIN billing ON billing.billing_id = p.billing_id
                   JOIN clients ON billing.client_id = clients.client_id
-                  WHERE payments.payment_id = ?";
+                  WHERE p.payment_id = ?";
+        
+        // $query = "";
+
     } elseif ($source === 'other_payment') {
         $query = "SELECT other_payments.*, clients.*
                   FROM other_payments

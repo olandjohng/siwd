@@ -242,43 +242,109 @@ else if(isset($_POST['add_partial_btn']))
         $remaining_balance = mysqli_real_escape_string($conn, $_POST['remaining_balance']);
         $note = mysqli_real_escape_string($conn, $_POST['payment_note2']);
 
-        // Fetch current billing status
-        $billing_query = "SELECT status FROM billing WHERE billing_id = ?";
-        $stmt = mysqli_prepare($conn, $billing_query);
+
+        $get_payment_details_sql = "select 
+            ifnull(sum(water_qty_improvement), 0) as wqi_fee,
+            ifnull(sum(water_management), 0) as wm_fee,
+            ifnull(sum(installation), 0) as installation_fee,
+            ifnull(sum(material), 0) as materials_fee,
+            ifnull(sum(tax), 0) as tax_fee,
+            ifnull(sum(arrears), 0) as arrears_fee,
+            ifnull(sum(surcharge), 0) as surcharge
+        from payments where billing_id = ?";
+
+        $stmt =  mysqli_prepare($conn, $get_payment_details_sql);
+        mysqli_stmt_bind_param($stmt, 'i', $billing_id);
+        mysqli_stmt_execute($stmt);
+        $payment_result = mysqli_stmt_get_result($stmt);
+        $payment_details = mysqli_fetch_assoc($payment_result);
+        mysqli_stmt_close($stmt);
+        
+        $get_billing_details_sql = "select 
+            discounted_billing, 
+            arrears as arrears_fee, 
+            surcharge, 
+            materials_fee, 
+            installation_fee, 
+            wqi_fee, wm_fee, tax as tax_fee, discount_amount,
+        (discounted_billing + arrears + surcharge + materials_fee + installation_fee + wqi_fee + wm_fee + tax) 
+            as subtotal 
+        from billing b where billing_id = ?";
+        
+        $stmt = mysqli_prepare($conn, $get_billing_details_sql);
         mysqli_stmt_bind_param($stmt, 'i', $billing_id);
         mysqli_stmt_execute($stmt);
         $billing_result = mysqli_stmt_get_result($stmt);
-        $billing = mysqli_fetch_assoc($billing_result);
+        $billing_details = mysqli_fetch_assoc($billing_result);
         mysqli_stmt_close($stmt);
 
-        if (!$billing) {
-            throw new Exception("Error fetching billing details: " . mysqli_error($conn));
-        }
+        $map = function() {
+            return floatval(0);
+        };
 
-        // Determine new status
-        $new_status = ($remaining_balance > 0) ? 'Partially Paid' : 'Paid';
-
-        // Insert payment into payments table using prepared statement
-        $insert_payment_query = "
-            INSERT INTO payments (billing_id, or_num, payment_method, payment_date, payment_purpose, amount_due, amount_received, note)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        ";
+        $payments = $payment_details;
         
-        $stmt = mysqli_prepare($conn, $insert_payment_query);
-        mysqli_stmt_bind_param($stmt, 'issssdds', $billing_id, $or_num, $payment_method, $payment_date, $payment_purpose, $amount_due, $amount_received, $note);
+        $payment_amount = (float) $amount_received;
+   
+        foreach ($payment_details as $key => $value) { 
+            $item_amount =  $billing_details[$key] - $payment_details[$key];
+
+            if($item_amount == 0) {
+                $payments[$key] = 0.00;
+                continue;
+            }
+
+            if($payment_amount < $item_amount){
+                $payments[$key] = $payment_amount;
+                $payment_amount -= $payment_amount;
+                break;
+            }
+
+            $payments[$key] = $item_amount;
+            $payment_amount -= $item_amount;
+        }
+        
+
+        $inser_payment_sql = "INSERT INTO payments (
+            billing_id, or_num, 
+            payment_method, payment_date, 
+            payment_purpose, amount_due, 
+            amount_received, note,
+            arrears, surcharge,
+            water_qty_improvement, water_management, 
+            tax, installation, 
+            material, bill_amount
+            )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        $stmt = mysqli_prepare($conn, $inser_payment_sql);
+        
+        mysqli_stmt_bind_param($stmt, 'issssddsdddddddd', 
+            $billing_id, $or_num, 
+            $payment_method, $payment_date, 
+            $payment_purpose, $amount_due, 
+            $amount_received, $note,
+            $payments['arrears_fee'], $payments['surcharge'],
+            $payments['wqi_fee'], $payments['wm_fee'],
+            $payments['tax_fee'], $payments['installation_fee'], 
+            $payments['materials_fee'], $payment_amount
+        );
 
         if (!mysqli_stmt_execute($stmt)) {
             throw new Exception("Error inserting payment: " . mysqli_stmt_error($stmt));
         }
+        
         mysqli_stmt_close($stmt);
 
-        // Update billing table using prepared statement
-        $update_billing_query = "
+        $new_status = ($remaining_balance > 0) ? 'Partially Paid' : 'Paid';
+        
+        $update_billing_sql = "
             UPDATE billing 
             SET remaining_balance = ?, status = ?
             WHERE billing_id = ?
         ";
-        $stmt = mysqli_prepare($conn, $update_billing_query);
+
+        $stmt = mysqli_prepare($conn, $update_billing_sql);
         mysqli_stmt_bind_param($stmt, 'dsi', $remaining_balance, $new_status, $billing_id);
 
         if (!mysqli_stmt_execute($stmt)) {
@@ -286,13 +352,65 @@ else if(isset($_POST['add_partial_btn']))
         }
         mysqli_stmt_close($stmt);
 
-        // Commit the transaction
         mysqli_commit($conn);
+
         redirect("payment-success.php", "Payment inserted successfully.");
+
+        die();
+        // Fetch current billing status
+        // $billing_query = "SELECT status FROM billing WHERE billing_id = ?";
+        // $stmt = mysqli_prepare($conn, $billing_query);
+        // mysqli_stmt_bind_param($stmt, 'i', $billing_id);
+        // mysqli_stmt_execute($stmt);
+        // $billing_result = mysqli_stmt_get_result($stmt);
+        // $billing = mysqli_fetch_assoc($billing_result);
+        // mysqli_stmt_close($stmt);
+
+        // if (!$billing) {
+        //     throw new Exception("Error fetching billing details: " . mysqli_error($conn));
+        // }
+
+        // Determine new status
+        // $new_status = ($remaining_balance > 0) ? 'Partially Paid' : 'Paid';
+
+        //get 
+
+        // Insert payment into payments table using prepared statement
+        // $insert_payment_query = "
+        //     INSERT INTO payments (billing_id, or_num, payment_method, payment_date, payment_purpose, amount_due, amount_received, note)
+        //     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        // ";
+        
+        // $stmt = mysqli_prepare($conn, $insert_payment_query);
+        // mysqli_stmt_bind_param($stmt, 'issssdds', $billing_id, $or_num, $payment_method, $payment_date, $payment_purpose, $amount_due, $amount_received, $note);
+
+        // if (!mysqli_stmt_execute($stmt)) {
+        //     throw new Exception("Error inserting payment: " . mysqli_stmt_error($stmt));
+        // }
+        // mysqli_stmt_close($stmt);
+
+        // Update billing table using prepared statement
+        // $update_billing_query = "
+        //     UPDATE billing 
+        //     SET remaining_balance = ?, status = ?
+        //     WHERE billing_id = ?
+        // ";
+        // $stmt = mysqli_prepare($conn, $update_billing_query);
+        // mysqli_stmt_bind_param($stmt, 'dsi', $remaining_balance, $new_status, $billing_id);
+
+        // if (!mysqli_stmt_execute($stmt)) {
+        //     throw new Exception("Error updating billing record: " . mysqli_stmt_error($stmt));
+        // }
+        // mysqli_stmt_close($stmt);
+
+        // Commit the transaction
+        // mysqli_commit($conn);
+        // redirect("payment-success.php", "Payment inserted successfully.");
     } catch (Exception $e) {
         // Rollback the transaction on error
         mysqli_rollback($conn);
-        redirect("add-payment.php?id=$billing_id", "An error occurred. Please try again. " . $e->getMessage());
+        echo 'error: ' . $e->getMessage();
+        // redirect("add-payment.php?id=$billing_id", "An error occurred. Please try again. " . $e->getMessage());
     }
 }
 
