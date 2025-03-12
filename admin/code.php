@@ -278,6 +278,7 @@ else if(isset($_POST['add_partial_btn']))
         $billing_details = mysqli_fetch_assoc($billing_result);
         mysqli_stmt_close($stmt);
 
+
         $map = function() {
             return floatval(0);
         };
@@ -304,6 +305,16 @@ else if(isset($_POST['add_partial_btn']))
             $payment_amount -= $item_amount;
         }
         
+        $sum_of_fees = array_reduce(array_values($payments), function ($carry, $value) {
+            return $carry += $value;
+        }, 0 );
+        
+        
+        if($sum_of_fees == 0 && $payment_amount) {
+            $payments['arrears_fee'] = $payment_amount;
+            $payment_amount = 0;
+        }
+
 
         $inser_payment_sql = "INSERT INTO payments (
             billing_id, or_num, 
