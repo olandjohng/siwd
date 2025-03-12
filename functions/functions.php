@@ -152,7 +152,7 @@ function getPaymentId($id, $source)
                 p.water_management, 
                 p.tax, p.installation,
                 p.payment_date, p.or_num, p.payment_method,
-                (p.bill_amount + p.arrears + p.water_qty_improvement + p.water_management + p.installation + p.material) as subtotal,
+                (p.bill_amount + p.arrears + p.water_qty_improvement + p.water_management + p.installation + p.material + p.surcharge) as subtotal,
                 -- (p.bill_amount + p.arrears + p.water_qty_improvement + p.water_management + p.installation + p.material + p.tax) as total,
                 
                 clients.*

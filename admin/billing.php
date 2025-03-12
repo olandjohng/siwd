@@ -54,7 +54,13 @@ $billing = getBilling();
                                 
                                 // Sort the billing array by billing number in descending order
                                 usort($billing, function ($a, $b) {
-                                    return $b['billing_num'] > $a['billing_num'];
+                                    $str_to_int_a = explode("-", $a['billing_num'])[1];
+                                    $str_to_int_b = explode("-", $b['billing_num'])[1];
+                                    if((int)$str_to_int_a > (int)$str_to_int_b){
+                                        return 0;
+                                    }
+                                    // return ((int)$str_to_int_a < (int)$str_to_int_b) ? 1 : -1;
+                                    return 1;
                                 });
 
                                 $current_date = date('Y-m-d'); // Get the current date in 'Y-m-d' format
