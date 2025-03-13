@@ -52,9 +52,11 @@ function getPayment() {
     //     JOIN clients ON billing.client_id = clients.client_id
     // ";
     $payments_query = "
-        SELECT payments.payment_id, payments.or_num, payments.payment_date, payments.payment_method, payments.payment_purpose, 
-               ( payments.amount_received - ifnull(payments.change_amount, 0)) AS amount, payments.amount_received, billing.billing_id, billing.billing_num, billing.billing_amount, billing.discounted_billing as discounted_billing, billing.arrears, billing.surcharge, 
-               billing.wqi_fee, billing.wm_fee, billing.installation_fee, billing.materials_fee, billing.tax, billing.status as status, clients.account_name, clients.account_num, 'payment' AS source
+        SELECT payments.payment_id, payments.or_num, payments.payment_date, payments.payment_method, payments.payment_purpose, payments.bill_amount,
+                payments.arrears, payments.surcharge, payments.water_qty_improvement, payments.water_management, payments.material, payments.installation, payments.tax, payments.bill_amount as discounted_billing,
+               ( payments.amount_received - ifnull(payments.change_amount, 0)) AS amount, payments.amount_received, billing.billing_id, billing.billing_num, billing.billing_amount, 
+                -- billing.discounted_billing as discounted_billing, 
+               billing.wqi_fee, billing.wm_fee, billing.installation_fee, billing.materials_fee, billing.status as status, clients.account_name, clients.account_num, 'payment' AS source
         FROM payments
         JOIN billing ON billing.billing_id = payments.billing_id
         JOIN clients ON billing.client_id = clients.client_id
@@ -75,7 +77,8 @@ function getPayment() {
     $other_payments_query = "
         SELECT other_payments.payment_id, other_payments.or_num, other_payments.payment_date, 'N/A' AS payment_method, other_payments.payment_purpose, 
                other_payments.amount_due AS amount, 'N/A' AS amount_received, 'N/A' AS billing_num, 0 AS billing_amount, 0 AS arrears, 0 AS surcharge, 
-               0 AS wqi_fee, 0 AS wm_fee, 0 AS installation_fee, 0 AS materials_fee, 0 AS tax, 'N/A' as status, clients.account_name, clients.account_num, 'other_payment' AS source
+               0 AS wqi_fee, 0 as water_qty_improvement, 0 as water_management, 0 as material, 0 as installation,
+               0 AS wm_fee, 0 AS installation_fee, 0 AS materials_fee, 0 AS tax, 'N/A' as status, clients.account_name, clients.account_num, 'other_payment' AS source
         FROM other_payments
         JOIN clients ON other_payments.client_id = clients.client_id
     ";
@@ -94,7 +97,8 @@ function getPayment() {
     //Fetch refund_payments
     $refund_payments_query = "
         SELECT refund_payments.payment_id, refund_payments.account_name, refund_payments.or_num, refund_payments.payment_date, 'N/A' AS payment_method, 'Refund' AS payment_purpose,
-                refund_payments.amount_due as amount, 'N/A AS amount_received', 'N/A' AS billing_num, 0 AS billing_amount, 0 AS arrears, 0 AS surcharge, 0 AS wqi_fee, 0 AS wm_fee, 0 AS installation_fee, 0 AS materials_fee,
+                refund_payments.amount_due as amount,
+                0 as water_qty_improvement, 0 as water_management, 0 as material, 0 as installation, 'N/A AS amount_received', 'N/A' AS billing_num, 0 AS billing_amount, 0 AS arrears, 0 AS surcharge, 0 AS wqi_fee, 0 AS wm_fee, 0 AS installation_fee, 0 AS materials_fee,
                 0 AS tax, 'N/A' AS status, 'N/A' AS account_num, 'refund_payment' AS source
         FROM refund_payments
     ";
@@ -117,6 +121,7 @@ function getPayment() {
     usort($all_payments, function($a, $b) {
         return $b['or_num'] - $a['or_num'];
     });
+
     return $all_payments;
 }
 

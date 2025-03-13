@@ -134,11 +134,6 @@ else if(isset($_POST['add_cashpayment_btn']))
 {
     mysqli_begin_transaction($conn);
     
-    // echo '<pre>';
-    // print_r($_POST);
-    // echo '</pre>';
-    // die;
-
     $billing_id = mysqli_real_escape_string($conn, $_POST['billing_id']);
     $or_num = mysqli_real_escape_string($conn, $_POST['or_num']);
     $payment_method = mysqli_real_escape_string($conn, $_POST['payment_method']);
@@ -149,18 +144,43 @@ else if(isset($_POST['add_cashpayment_btn']))
     $change_amount = mysqli_real_escape_string($conn, $_POST['change']);
     $note = mysqli_real_escape_string($conn, $_POST['payment_note']);
 
+    $get_billing_details_sql = "SELECT discounted_billing, arrears, surcharge, materials_fee, installation_fee, wqi_fee, wm_fee, tax FROM billing WHERE billing_id = ?";
+    
+    $stmt = mysqli_prepare($conn, $get_billing_details_sql);
+
+    mysqli_stmt_bind_param($stmt, "i", $billing_id);
+
+    mysqli_stmt_execute($stmt);
+
+    $get_billing_details_run = mysqli_stmt_get_result($stmt);
+
+    $billing_details = mysqli_fetch_assoc($get_billing_details_run);
+
+    mysqli_stmt_close($stmt);
+
     if ($amount_received >= $amount_due) {
         $status = 'Paid';
 
         $update_billing_query = "UPDATE billing SET status = '$status', remaining_balance = 0 WHERE billing_id = '$billing_id'";
         mysqli_query($conn, $update_billing_query);
 
-        $insert_payment_query = "INSERT INTO payments (billing_id, or_num, payment_method, payment_date, payment_purpose, amount_due, amount_received, change_amount, note)
-                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $insert_payment_query = "INSERT INTO payments (billing_id, or_num, payment_method, payment_date, payment_purpose, amount_due, amount_received, change_amount, note,
+                                    arrears, surcharge, water_qty_improvement, water_management, tax, installation, material, bill_amount
+                                )
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
         
         $stmt = mysqli_prepare($conn, $insert_payment_query);
 
-        mysqli_stmt_bind_param($stmt, "issssddds", $billing_id, $or_num, $payment_method, $payment_date, $payment_purpose, $amount_due, $amount_received, $change_amount, $note);
+        mysqli_stmt_bind_param($stmt, "issssdddsdddddddd", $billing_id, $or_num, $payment_method, $payment_date, $payment_purpose, $amount_due, $amount_received, $change_amount, $note,
+            $billing_details['arrears'], 
+            $billing_details['surcharge'], 
+            $billing_details['wqi_fee'],
+            $billing_details['wm_fee'],
+            $billing_details['tax'],
+            $billing_details['installation_fee'],
+            $billing_details['materials_fee'],
+            $billing_details['discounted_billing'],
+        );
 
         if(mysqli_stmt_execute($stmt)) {
             mysqli_commit($conn);
