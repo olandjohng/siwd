@@ -85,10 +85,11 @@ include('../middleware/adminMiddleware.php');
                                 $payment_method = htmlspecialchars($row['payment_method']);
                                 $arrears = htmlspecialchars($row['arrears']);
                                 $surcharge = htmlspecialchars($row['surcharge']);
-                                $wqi_fee = htmlspecialchars($row['wqi_fee']);
-                                $wm_fee = htmlspecialchars($row['wm_fee']);
-                                $installation_fee = htmlspecialchars($row['installation_fee']);
-                                $materials_fee = htmlspecialchars($row['materials_fee']);
+                                // $wqi_fee = htmlspecialchars($row['wqi_fee']);
+                                $wqi_fee = htmlspecialchars($row['water_qty_improvement']);
+                                $wm_fee = htmlspecialchars($row['water_management']);
+                                $installation_fee = htmlspecialchars($row['installation']);
+                                $materials_fee = htmlspecialchars($row['material']);
                                 $tax = htmlspecialchars($row['tax']);
 
                                 if ($row['status'] === 'Partially Paid') {
