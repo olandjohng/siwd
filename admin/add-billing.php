@@ -278,16 +278,23 @@ include('includes/header.php');
             $('#account_num').val(accountNum);
             $('#client_id').val(clientId);
 
-
+            // console.log(balance)
             if (status === 'Due') {
                 alert("Selected client has an unsettled bill. Previous billing will be added in this billing.");
 
                 $('#wqi_fee').val(parseFloat($('#wqi_fee').val()) + wqiFee);
                 $('#wm_fee').val(parseFloat($('#wm_fee').val()) + wmFee);
                 $('#arrears').val(billingAmount.toFixed(2));
-                $("#surcharge").val((parseFloat(billingAmount.toFixed(2)) * 0.10).toFixed(2))
- 
-                $('#search-results').html('');
+                $("#surcharge").val((parseFloat(billingAmount.toFixed(2)) * 0.10).toFixed(2));
+
+            }
+            if(status === 'Partially Paid') {
+                alert("Selected client has an unsettled bill. Previous billing will be added in this billing.");
+                
+                const balance = $(this).data('balance');
+                
+                $('#arrears').val(balance.toFixed(2));
+                $("#surcharge").val((parseFloat(balance.toFixed(2)) * 0.10).toFixed(2))
             }
 
             $('#search-results').html('');

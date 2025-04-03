@@ -18,11 +18,18 @@ $searchQuery = isset($_GET['query']) ? $_GET['query'] : '';
 //         WHERE clients.account_name LIKE '%" . $conn->real_escape_string($searchQuery) ."%' OR clients.account_num LIKE '%" . $conn->real_escape_string($searchQuery) . "%'";
 
 
-$sql = "SELECT c.*, (b.billing_amount + b.arrears) as billing_amount, b.wqi_fee, b.wm_fee, b.present_reading, b.status 
+$sql = "SELECT DISTINCT c.*, (b.billing_amount + b.arrears) as billing_amount, b.wqi_fee, b.wm_fee, b.present_reading, b.status,
+        (b.total - coalesce(p.balance, 0)) as balance
         FROM clients c
         LEFT JOIN billing b on b.client_id = c.client_id 
-        and b.due_date = (SELECT max(due_date) FROM billing d WHERE d.client_id = b.client_id )
-        WHERE c.account_name LIKE '%" . $conn->real_escape_string($searchQuery) ."%' OR c.account_num LIKE '%". $conn->real_escape_string($searchQuery) ."%'";
+        and b.due_date = (
+            SELECT max(due_date) FROM billing d WHERE d.client_id = b.client_id 
+        )
+        LEFT JOIN (
+            SELECT billing_id, sum(amount_received) as balance from payments group by billing_id 
+        ) p on p.billing_id = b.billing_id 
+        WHERE c.account_name LIKE '%" . $conn->real_escape_string($searchQuery) ."%' OR c.account_num LIKE '%". $conn->real_escape_string($searchQuery) ."%'
+        ";
 
 
 $result = $conn->query($sql);
@@ -41,7 +48,7 @@ if(mysqli_num_rows($result) > 0){?>
                 $wm_fee = $row['wm_fee'];
                 $status = $row['status'];
                 $present_reading = $row['present_reading'];
-
+                $balance = $row['balance'];
                 switch($account_type) {
                     case '1':
                         $accountTypeValue = 'Residential';
@@ -69,7 +76,7 @@ if(mysqli_num_rows($result) > 0){?>
                 }
                 ?>
 
-                <tr class="search-result" data-client-id="<?= $client_id; ?>" data-account-num="<?= $account_num; ?>" data-account-name="<?= $account_name; ?>" data-account-type="<?= $accountTypeValue; ?>" data-billing-amount="<?= $billing_amount; ?>" data-wqi-fee="<?= $wqi_fee; ?>" data-wm-fee="<?= $wm_fee; ?>" data-present-reading="<?= $present_reading; ?>" data-status="<?= $status; ?>">
+                <tr class="search-result" data-client-id="<?= $client_id; ?>" data-account-num="<?= $account_num; ?>" data-account-name="<?= $account_name; ?>" data-account-type="<?= $accountTypeValue; ?>" data-billing-amount="<?= $billing_amount; ?>" data-wqi-fee="<?= $wqi_fee; ?>" data-wm-fee="<?= $wm_fee; ?>" data-balance="<?= $balance ?>" data-present-reading="<?= $present_reading; ?>" data-status="<?= $status; ?>">
                     <td><?= $account_num; ?></td>
                     <td><?= $account_name; ?></td>
                     <td><?= $accountTypeValue; ?></td>
