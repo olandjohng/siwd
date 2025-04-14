@@ -288,7 +288,7 @@ include('includes/header.php');
                 $("#surcharge").val((parseFloat(billingAmount.toFixed(2)) * 0.10).toFixed(2));
 
             }
-            if(status === 'Partially Paid') {
+            if(status === 'Partially Paid' || status === 'Rolled Over') {
                 alert("Selected client has an unsettled bill. Previous billing will be added in this billing.");
                 
                 const balance = $(this).data('balance');
