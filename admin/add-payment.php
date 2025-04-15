@@ -46,8 +46,8 @@ include('includes/header.php');
                                 <label for="payment_method">Payment Method</label>
                                 <select name="payment_method" id="payment_method" class="form-select">
                                     <option value="Cash">Cash</option>
+                                    <option value="Partial">Partial</option>
                                         <?php if(!$isDue) : ?>
-                                            <option value="Partial">Partial</option>
                                         <?php endif ?>
                                     <option value="Check">Bank Check</option>
                                 </select>
