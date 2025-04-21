@@ -269,8 +269,8 @@ else if(isset($_POST['add_partial_btn']))
             ifnull(sum(installation), 0) as installation_fee,
             ifnull(sum(material), 0) as materials_fee,
             ifnull(sum(tax), 0) as tax_fee,
-            ifnull(sum(arrears), 0) as arrears_fee,
-            ifnull(sum(surcharge), 0) as surcharge
+            ifnull(sum(surcharge), 0) as surcharge,
+            ifnull(sum(arrears), 0) as arrears_fee
         from payments where billing_id = ?";
 
         $stmt =  mysqli_prepare($conn, $get_payment_details_sql);

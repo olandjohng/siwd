@@ -281,13 +281,13 @@ include('includes/header.php');
             if (status === 'Due') {
                 alert("Selected client has an unsettled bill. Previous billing will be added in this billing.");
                 const balance = $(this).data('balance');
-                console.log(balance)
                 
                 if($(this).data('balance')){
-                    console.log('naay balance')
                     $('#arrears').val(balance.toFixed(2));
                     $("#surcharge").val((parseFloat(balance.toFixed(2)) * 0.10).toFixed(2))
+                    $('#search-results').html('');
                     return
+
                 }
 
 
@@ -297,6 +297,7 @@ include('includes/header.php');
                 $("#surcharge").val((parseFloat(billingAmount.toFixed(2)) * 0.10).toFixed(2));
 
             }
+
             if(status === 'Partially Paid' || status === 'Rolled Over') {
                 alert("Selected client has an unsettled bill. Previous billing will be added in this billing.");
                 
@@ -305,7 +306,6 @@ include('includes/header.php');
                 $('#arrears').val(balance.toFixed(2));
                 $("#surcharge").val((parseFloat(balance.toFixed(2)) * 0.10).toFixed(2))
             }
-
             $('#search-results').html('');
         })
     });
