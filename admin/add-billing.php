@@ -283,19 +283,17 @@ include('includes/header.php');
                 const balance = $(this).data('balance');
                 
                 if($(this).data('balance')){
-                    $('#arrears').val(balance.toFixed(2));
-                    $("#surcharge").val((parseFloat(balance.toFixed(2)) * 0.10).toFixed(2))
+    
+                    $('#arrears').val(balance);
+                    $("#surcharge").val(balance * 0.10)
                     $('#search-results').html('');
                     return
-
                 }
-
 
                 $('#wqi_fee').val(parseFloat($('#wqi_fee').val()) + wqiFee);
                 $('#wm_fee').val(parseFloat($('#wm_fee').val()) + wmFee);
                 $('#arrears').val(billingAmount.toFixed(2));
                 $("#surcharge").val((parseFloat(billingAmount.toFixed(2)) * 0.10).toFixed(2));
-
             }
 
             if(status === 'Partially Paid' || status === 'Rolled Over') {
