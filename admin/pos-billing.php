@@ -4,6 +4,29 @@ include('../middleware/adminMiddleware.php');
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="assets/css/pos.css">
+    <style>
+        @media print {
+        body {
+            width: 80mm;
+            font-size: 12px;
+            margin: 0;
+            padding: 0;
+        }
+        .no-print {
+            display: none !important;
+        }
+        }
+
+        /* Optional: On-screen layout control */
+        @media screen {
+        body {
+            max-width: 400px;
+            margin: auto;
+            padding: 10px;
+        }
+        }
+    </style>
+
 </head>
 <body>
     <div class="container">
@@ -114,6 +137,23 @@ include('../middleware/adminMiddleware.php');
                 echo "ID missing from URL";
             }
         ?>
-    </div>    
+    </div>
+
+<script>
+window.onload = function () {
+  const originalBody = document.body.innerHTML;
+  const printContent = document.querySelector('.container').innerHTML;
+
+  document.body.innerHTML = printContent;
+  window.print();
+
+  // Wait a bit before restoring
+  setTimeout(() => {
+    document.body.innerHTML = originalBody;
+  }, 500);
+};
+</script>
+
+
 </body>
 </html>

@@ -80,6 +80,7 @@ else if(isset($_POST['add_billing_btn']))
     $discount_type = mysqli_real_escape_string($conn, $_POST['discount_type']);
     $discount_amount = mysqli_real_escape_string($conn, $_POST['discount_amount']);
     $discounted_total = mysqli_real_escape_string($conn, $_POST['discounted_total']);
+
     $status = mysqli_real_escape_string($conn, $_POST['status']);
 
     $previous_status_query = "SELECT status FROM billing WHERE client_id = ? AND reading_date < CURDATE() ORDER BY reading_date DESC LIMIT 1";
@@ -116,7 +117,9 @@ else if(isset($_POST['add_billing_btn']))
 
     var_dump($client_id);
     var_dump($insert_billing_query);
-    var_dump($billing_num); 
+    var_dump($billing_num);
+    var_dump($status);
+
 
     if(mysqli_stmt_execute($stmt)) {
         redirect("billing.php", "Billing created successfully.");
@@ -536,42 +539,96 @@ else if(isset($_POST['update_client_btn']))
     }
 }
 
-else if(isset($_POST['update_billing_btn']))
-{
+// else if(isset($_POST['update_billing_btn']))
+// {
+//     $billing_id = $_POST['billing_id'];
+//     $client_id = $_POST['client_id'];
+//     $billing_num = $_POST['billing_num'];
+//     $covered_from = $_POST['covered_from'];
+//     $covered_to = $_POST['covered_to'];
+//     $reading_date = $_POST['reading_date'];
+//     $due_date = $_POST['due_date'];
+//     $previous_reading = $_POST['previous_reading'];
+//     $present_reading = $_POST['present_reading'];
+//     $consumption = $_POST['consumption'];
+//     $billing_amount = $_POST['billing_amount'];
+//     $arrears = $_POST['arrears'];
+//     $surcharge = $_POST['surcharge'];
+//     $materials_fee = $_POST['materials_fee'];
+//     $installation_fee = $_POST['installation_fee'];
+//     $wqi_fee = $_POST['wqi_fee'];
+//     $wm_fee = $_POST['wm_fee'];
+//     $subtotal = $_POST['subtotal'];
+//     $tax = $_POST['tax'];
+//     $total = $_POST['total'];
+//     $status = $_POST['status'];
+
+//     $update_billing_query = "UPDATE billing SET client_id='$client_id', billing_num='$billing_num', covered_from='$covered_from', covered_to='$covered_to',
+//                             reading_date='$reading_date', due_date='$due_date', previous_reading='$previous_reading', present_reading='$present_reading',
+//                             consumption='$consumption', billing_amount='$billing_amount', arrears='$arrears', surcharge='$surcharge', materials_fee='$materials_fee',
+//                             installation_fee='$installation_fee', wqi_fee='$wqi_fee', wm_fee='$wm_fee', subtotal='$subtotal', tax='$tax', total='$total', status='$status'
+//                             WHERE billing_id='$billing_id'";
+
+//     if(mysqli_query($conn, $update_billing_query)) {
+//         redirect("update-billing.php?id=$billing_id", "Billing updated successfully.");
+//     } else {
+//         redirect("update-billing.php?id=$billing_id", "Something went wrong.");
+//     }
+// }
+else if (isset($_POST['update_billing_btn'])) {
     $billing_id = $_POST['billing_id'];
-    $client_id = $_POST['client_id'];
-    $billing_num = $_POST['billing_num'];
-    $covered_from = $_POST['covered_from'];
-    $covered_to = $_POST['covered_to'];
-    $reading_date = $_POST['reading_date'];
-    $due_date = $_POST['due_date'];
-    $previous_reading = $_POST['previous_reading'];
-    $present_reading = $_POST['present_reading'];
-    $consumption = $_POST['consumption'];
-    $billing_amount = $_POST['billing_amount'];
-    $arrears = $_POST['arrears'];
-    $surcharge = $_POST['surcharge'];
-    $materials_fee = $_POST['materials_fee'];
-    $installation_fee = $_POST['installation_fee'];
-    $wqi_fee = $_POST['wqi_fee'];
-    $wm_fee = $_POST['wm_fee'];
-    $subtotal = $_POST['subtotal'];
-    $tax = $_POST['tax'];
-    $total = $_POST['total'];
-    $status = $_POST['status'];
+    $client_id = mysqli_real_escape_string($conn, $_POST['client_id']);
+    $billing_num = mysqli_real_escape_string($conn, $_POST['billing_num']);
+    $covered_from = mysqli_real_escape_string($conn, $_POST['covered_from']);
+    $covered_to = mysqli_real_escape_string($conn, $_POST['covered_to']);
+    $reading_date = mysqli_real_escape_string($conn, $_POST['reading_date']);
+    $due_date = mysqli_real_escape_string($conn, $_POST['due_date']);
+    $previous_reading = mysqli_real_escape_string($conn, $_POST['previous_reading']);
+    $present_reading = mysqli_real_escape_string($conn, $_POST['present_reading']);
+    $consumption = mysqli_real_escape_string($conn, $_POST['consumption']);
+    $billing_amount = mysqli_real_escape_string($conn, $_POST['billing_amount']);
+    $discounted_billing = mysqli_real_escape_string($conn, $_POST['discounted_billing']);
+    $arrears = mysqli_real_escape_string($conn, $_POST['arrears']);
+    $surcharge = mysqli_real_escape_string($conn, $_POST['surcharge']);
+    $materials_fee = mysqli_real_escape_string($conn, $_POST['materials_fee']);
+    $installation_fee = mysqli_real_escape_string($conn, $_POST['installation_fee']);
+    $wqi_fee = mysqli_real_escape_string($conn, $_POST['wqi_fee']);
+    $wm_fee = mysqli_real_escape_string($conn, $_POST['wm_fee']);
+    $subtotal = mysqli_real_escape_string($conn, $_POST['subtotal']);
+    $tax = mysqli_real_escape_string($conn, $_POST['tax']);
+    $total = mysqli_real_escape_string($conn, $_POST['total']);
+    $discount_type = mysqli_real_escape_string($conn, $_POST['discount_type']);
+    $discount_amount = mysqli_real_escape_string($conn, $_POST['discount_amount']);
+    $discounted_total = mysqli_real_escape_string($conn, $_POST['discounted_total']);
+    $status = mysqli_real_escape_string($conn, $_POST['status']);
 
-    $update_billing_query = "UPDATE billing SET client_id='$client_id', billing_num='$billing_num', covered_from='$covered_from', covered_to='$covered_to',
-                            reading_date='$reading_date', due_date='$due_date', previous_reading='$previous_reading', present_reading='$present_reading',
-                            consumption='$consumption', billing_amount='$billing_amount', arrears='$arrears', surcharge='$surcharge', materials_fee='$materials_fee',
-                            installation_fee='$installation_fee', wqi_fee='$wqi_fee', wm_fee='$wm_fee', subtotal='$subtotal', tax='$tax', total='$total', status='$status'
-                            WHERE billing_id='$billing_id'";
+    $update_query = "UPDATE billing SET 
+        client_id = ?, billing_num = ?, covered_from = ?, covered_to = ?, reading_date = ?, due_date = ?, 
+        previous_reading = ?, present_reading = ?, consumption = ?, billing_amount = ?, discounted_billing = ?, 
+        arrears = ?, surcharge = ?, materials_fee = ?, installation_fee = ?, wqi_fee = ?, wm_fee = ?, 
+        subtotal = ?, tax = ?, total = ?, discount_type = ?, discount_amount = ?, discounted_total = ?, 
+        status = ? 
+        WHERE billing_id = ?";
 
-    if(mysqli_query($conn, $update_billing_query)) {
+    $stmt = mysqli_prepare($conn, $update_query);
+    mysqli_stmt_bind_param($stmt, "isssssiiiddddddddddsddssi",
+        $client_id, $billing_num, $covered_from, $covered_to, $reading_date, $due_date,
+        $previous_reading, $present_reading, $consumption, $billing_amount, $discounted_billing,
+        $arrears, $surcharge, $materials_fee, $installation_fee, $wqi_fee, $wm_fee,
+        $subtotal, $tax, $total, $discount_type, $discount_amount, $discounted_total,
+        $status, $billing_id
+    );
+
+    if (mysqli_stmt_execute($stmt)) {
         redirect("update-billing.php?id=$billing_id", "Billing updated successfully.");
     } else {
-        redirect("update-billing.php?id=$billing_id", "Something went wrong.");
+        $error = mysqli_error($conn);
+        redirect("update-billing.php?id=$billing_id", "Error updating billing: $error");
     }
+
+    mysqli_stmt_close($stmt);
 }
+
 
 // Delete
 else if(isset($_POST['user_id'])) {

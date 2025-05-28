@@ -41,12 +41,19 @@ include('includes/header.php');
                     <th class="border-bottom" scope="col">Amount</th>
                 </tr>
             </thead>
+
             <tbody>
                 <?php
                     $payments = getPayment();
 
                     if ($payments && count($payments) > 0) {
-                        foreach ($payments as $row) {
+                        // Sort by payment_date descending (latest first)
+                        usort($payments, function($a, $b) {
+                            return strtotime($b['payment_date']) <=> strtotime($a['payment_date']);
+                        });
+
+                        // Limit to latest 10
+                        foreach (array_slice($payments, 0, 10) as $row) {
                             $name = htmlspecialchars($row['account_name']);
                             $or_num = htmlspecialchars($row['or_num']);
                             $payment_date = htmlspecialchars(date('M d Y', strtotime($row['payment_date'])));
@@ -54,28 +61,22 @@ include('includes/header.php');
                             // Check the source to determine which table the data came from
                             if ($row['source'] === 'payment') {
                                 $id = htmlspecialchars($row['payment_id']); 
-                                $payment_method = htmlspecialchars($row['payment_method']); // Example field from payments table
-                                $payment_purpose = htmlspecialchars($row['payment_purpose']); // Example field from payments table
-                                
-                                if ($row['status'] === 'Partially Paid') {
-                                    $amount = htmlspecialchars($row['amount_received']);
-                                } else {
-                                    $amount = htmlspecialchars($row['amount']);
-                                }
-                                
+                                $payment_method = htmlspecialchars($row['payment_method']);
+                                $payment_purpose = htmlspecialchars($row['payment_purpose']);
+                                $amount = ($row['status'] === 'Partially Paid')
+                                    ? htmlspecialchars($row['amount_received'])
+                                    : htmlspecialchars($row['amount']);
                             } else if ($row['source'] === 'other_payment') {
                                 $id = htmlspecialchars($row['payment_id']); 
-                                $payment_method = 'N/A'; // Assuming other_payments does not have payment_method
-                                $payment_purpose = htmlspecialchars($row['payment_purpose']); // Example field from other_payments table
-                                $amount = htmlspecialchars($row['amount']); // Assuming amount_received is used in other_payments
+                                $payment_method = 'N/A';
+                                $payment_purpose = htmlspecialchars($row['payment_purpose']);
+                                $amount = htmlspecialchars($row['amount']);
                             } else if ($row['source'] === 'refund_payment') {
                                 $id = htmlspecialchars($row['payment_id']);
                                 $payment_method = 'N/A';
                                 $payment_purpose = htmlspecialchars($row['payment_purpose']);
                                 $amount = htmlspecialchars($row['amount']);
                             }
-                    
-                            
                 ?>
                 <tr>
                     <td><?= $or_num; ?></td>
@@ -91,6 +92,7 @@ include('includes/header.php');
                     }
                 ?>
             </tbody>
+
         </table>        
     </div>
 </div>

@@ -177,7 +177,7 @@ include('includes/header.php');
 
                 <h2 class="h5 my-4">Tax & Total</h2>
                 <div class="row">
-                    <input type="hidden" id="subtotal" name="subtotal">
+                    <input type="text" id="subtotal" name="subtotal">
                     <div class="col-sm-6 mb-3">
                         <div class="form-group">
                             <label for="tax">Franchise Tax</label>
@@ -324,6 +324,13 @@ include('includes/header.php');
 
             calculateTotal();
         }
+
+        ['billing_amount', 'arrears', 'surcharge', 'wqi_fee', 'wm_fee', 'materials_fee', 'installation_fee'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', calculateSubtotal);
+            }
+        });
 
         function calculateTax() {
             var billingAmount = parseFloat(document.getElementById('billing_amount').value) || 0;

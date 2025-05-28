@@ -33,9 +33,54 @@ $billing = getBilling();
 <div class="card">
     <div class="table-responsive py-4">
         <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-columns">
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label for="zoneFilter" class="form-label">Filter by Zone:</label>
+                    <select id="zoneFilter" class="form-select">
+                        <option value="">All Zones</option>
+                        <option value="1A">1A</option>
+                        <option value="1B">1A</option>
+                        <option value="2">1A</option>
+                        <option value="3">1A</option>
+                        <option value="4A">1A</option>
+                        <option value="4B">1A</option>
+                        <option value="5">1A</option>
+                        <option value="6A">1A</option>
+                        <option value="6B">1A</option>
+                        <option value="7A">1A</option>
+                        <option value="7B">1A</option>
+                        <option value="8">1A</option>
+                        <option value="9">1A</option>
+                        <option value="10">1A</option>
+                        <option value="11">1A</option>
+                        <option value="12">1A</option>
+                    </select>
+                </div>
+
+                
+                <div class="col-md-3">
+                    <label for="statusFilter" class="form-label">Filter by Status:</label>
+                    <select id="statusFilter" class="form-select">
+                        <option value="">All Statuses</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Due">Due</option>
+                        <option value="Rolled Over">Rolled Over</option>
+                        <option value="Partially Paid">Partially Paid</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3 d-flex align-items-end">
+                    <button id="clearFilters" class="btn btn-outline-primary w-100">Clear Filters</button>
+                </div>
+            </div>
+
+            
+
+
             <div class="dataTable-container">   
-                <table class="table table-flush dataTable-table data-table" id="billingTable">
-                    <thead class="thead-light">
+                <table id="billingTable" class="table table-hover align-items-center">
+                    <thead>
                         <tr>
                             <th>#</th>
                             <th>Bill For</th>
@@ -52,34 +97,27 @@ $billing = getBilling();
                         <?php
                             if ($billing && count($billing) > 0) {
                                 
-                                // Sort the billing array by billing number in descending order
-                                usort($billing, function ($a, $b) {
-                                    $str_to_int_a = explode("-", $a['billing_num'])[1];
-                                    $str_to_int_b = explode("-", $b['billing_num'])[1];
-                                    if((int)$str_to_int_a > (int)$str_to_int_b){
-                                        return 0;
-                                    }
-                                    // return ((int)$str_to_int_a < (int)$str_to_int_b) ? 1 : -1;
-                                    return 1;
-                                });
-
-                                $current_date = date('Y-m-d'); // Get the current date in 'Y-m-d' format
+                                $current_date = date('Y-m-d');
 
                                 foreach ($billing as $row) {
+
                                     $name = $row['account_name'];
                                     $billing_num = $row['billing_num'];
                                     $reading_date = date('M d, Y', strtotime($row['reading_date']));
-                                    $due_date = date('Y-m-d', strtotime($row['due_date'])); // Convert due date to 'Y-m-d' format for comparison
-                                    $total = $row['discounted_total'];
+                                    $due_date = date('Y-m-d', strtotime($row['due_date']));
                                     $r_balance = (float)$row['r_balance'];
                                     $zone = $row['zone']; 
-                                    if ($due_date < $current_date && $row['status'] !== 'Paid' && $row['status'] !== 'Rolled Over') {
+                                    $total = $row['discounted_total'];
+
+                                    $current_status = $row['billing_status'];
+
+                                    if ($due_date < $current_date && $current_status !== 'Paid' && $current_status !== 'Rolled Over') {
                                         $status = 'Due';
                                         $id = $row['billing_id'];
                                         $update_billing_query = "UPDATE billing SET status = '$status' WHERE billing_id = '$id'";
                                         mysqli_query($conn, $update_billing_query);
                                     } else {
-                                        $status = $row['status'];
+                                        $status = $current_status;
                                     }
 
                                     $due_date_display = date('M d, Y', strtotime($row['due_date'])); // Convert due date back to display format
@@ -149,7 +187,7 @@ $billing = getBilling();
                                 </div>
                                 <button class="btn btn-link text-dark" type="button" name="delete_billing_btn" onclick="confirmDelete(<?= $id; ?>)">
                                     <svg class="icon icon-xs text-danger ms-1" title="" data-bs-toggle="tooltip" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" data-bs-original-title="Delete" aria-label="Delete">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 100-16 8 8 000 16zM8.707 7.293a1 1 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 101.414 1.414L10 11.414l1.293 1.293a1 1 001.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
                                     </svg>
                                 </button>
                             </td>
@@ -206,3 +244,32 @@ $billing = getBilling();
 </script>
 
 <?php include('includes/footer.php') ?>
+
+<script>
+$(document).ready(function () {
+    var table = $('#billingTable').DataTable({
+        order: [[0, 'desc']]
+    });
+
+   
+    $('#zoneFilter').on('change', function () {
+        var val = $.fn.dataTable.util.escapeRegex($(this).val());
+        table.column(2).search(val ? '^' + val + '$' : '', true, false).draw();
+    });
+
+    
+    $('#statusFilter').on('change', function () {
+        var val = $.fn.dataTable.util.escapeRegex($(this).val());
+        table.column(7).search(val ? '^' + val + '$' : '', true, false).draw();
+    });
+
+    
+    $('#clearFilters').on('click', function () {
+        $('#zoneFilter').val('');
+        $('#statusFilter').val('');
+        table.column(2).search('').column(7).search('').draw();
+    });
+});
+
+
+</script>
