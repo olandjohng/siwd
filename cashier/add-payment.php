@@ -1,5 +1,5 @@
 <?php
-include('../functions/functions.php');
+include('../middleware/cashierMiddleware.php');
 include('includes/header.php');
 ?>
 
