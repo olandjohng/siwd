@@ -101,7 +101,11 @@ if (isset($_GET['id']) && isset($_GET['source'])) {
                 <div><strong><?= htmlspecialchars($paymentId['account_name']); ?></strong></div>
                 <div><?= htmlspecialchars($paymentId['address'] . ', Brgy. ' . $paymentId['barangay']); ?></div>
                 <div>San Isidro, Davao Oriental</div>
-                <div>Discount Type: <?= htmlspecialchars($paymentId['discount_type']); ?> </div>
+                <?php if ($source === 'payment') { ?>
+                    <div>Discount Type: <?= htmlspecialchars($paymentId['discount_type']); ?> </div>
+                <?php } elseif ($source === 'other_payment') { ?>
+                    <div></div>
+                <?php } ?>
                 <div>Payment Date: <?= htmlspecialchars(date('d M Y', strtotime($paymentId['payment_date']))); ?></div>
                 <?php if ($source === 'payment') { ?>
                     <div>Payment Method: <?= htmlspecialchars($source === 'payment' ? $paymentId['payment_method'] : 'N/A'); ?></div>
@@ -165,14 +169,14 @@ if (isset($_GET['id']) && isset($_GET['source'])) {
                         <td class="left strong">Amount Due</td>
                         <td class="right">₱ <?= htmlspecialchars($paymentId['amount_due']); ?></td>
                     </tr>
-                    <tr>
+                    <!-- <tr>
                         <td class="left strong">Amount Received</td>
                         <td class="right">₱ <?= htmlspecialchars($paymentId['amount_received']); ?></td>
                     </tr>
                     <tr>
                         <td class="left strong">Change Amount</td>
                         <td class="right">₱ <?= htmlspecialchars($paymentId['change_amount']); ?></td>
-                    </tr>
+                    </tr> -->
                     <?php } ?>
                 </tbody>
             </table>

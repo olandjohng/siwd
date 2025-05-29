@@ -1,5 +1,5 @@
 <?php
-include('../functions/functions.php');
+include('../middleware/cashierMiddleware.php');
 include('includes/header.php');
 ?>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
