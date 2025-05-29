@@ -124,6 +124,12 @@ include('includes/header.php');
                     </div>
                     <div class="col-sm-4 mb-3">
                         <div class="form-group">
+                            <label for="discounted_billing">Discounted Billing</label>
+                            <input type="text" class="form-control" id="discounted_billing" name="discounted_billing" value="<?= $billing['discounted_billing']; ?>" readonly required>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 mb-3">
+                        <div class="form-group">
                             <label for="arrears">Arrears</label>
                             <input type="text" class="form-control" id="arrears" name="arrears" value="<?= $billing['arrears']; ?>" >
                         </div>
@@ -378,7 +384,10 @@ function getAccountTypeText($accountType) {
     updateConsumption();
 </script>
 
-<!-- <script>
+<script>
+
+    let fecth_delay = null;
+
     document.addEventListener('DOMContentLoaded', function() {
         function calculateSubtotal() {
             var fields = ['billing_amount', 'arrears', 'surcharge', 'wqi_fee', 'wm_fee', 'materials_fee', 'installation_fee'];
@@ -391,9 +400,22 @@ function getAccountTypeText($accountType) {
             calculateTotal();
         }
 
+        ['billing_amount', 'arrears', 'surcharge', 'wqi_fee', 'wm_fee', 'materials_fee', 'installation_fee'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', calculateSubtotal);
+            }
+        });
+
         function calculateTax() {
             var billingAmount = parseFloat(document.getElementById('billing_amount').value) || 0;
+
             var tax = billingAmount * 0.02;
+            if($('#arrears').val()) {
+                const arrears_tax = parseFloat($('#arrears').val()) * 0.02;
+                tax += arrears_tax
+            }
+
             document.getElementById('tax').value = tax.toFixed(2);
 
             calculateTotal();
@@ -413,7 +435,6 @@ function getAccountTypeText($accountType) {
         function fetchPrice() {
             var accountType = document.getElementById('account_type').value;
             var consumption = parseFloat(document.getElementById('consumption').value);
-
             if (accountType && !isNaN(consumption)) {
                 var tableName = '';
                 switch (accountType) {
@@ -426,17 +447,22 @@ function getAccountTypeText($accountType) {
                     case 'Commercial':
                         tableName = 'pricing_commercial';
                         break;
+                    case 'Government':
+                        tableName = 'pricing_semicom';
+                        break;
                     default:
                         console.error('Invalid account type');
                         return;
                 }
-
+                
+               
                 $.ajax({
                     url: 'fetch_price.php',
                     method: 'POST',
                     data: { tableName: tableName, consumption: consumption },
                     success: function(response){
-                        document.getElementById('billing_amount').value = response;
+                        
+                        document.getElementById('billing_amount').value = Number(response).toFixed(2);
                         calculateSubtotal();
                         calculateTax();
                     },
@@ -444,6 +470,7 @@ function getAccountTypeText($accountType) {
                         console.error(error);
                     }
                 });
+             
             }
         }
 
@@ -454,7 +481,13 @@ function getAccountTypeText($accountType) {
             if (!isNaN(previousReading) && !isNaN(presentReading)) {
                 var consumption = presentReading - previousReading;
                 document.getElementById('consumption').value = consumption;
-                fetchPrice();
+                
+                if(fecth_delay) { clearTimeout(fecth_delay) }
+            
+                calculateSubtotal();
+                calculateTax();
+                fecth_delay = setTimeout(() => fetchPrice() , 1000)
+            
             } else {
                 document.getElementById('consumption').value = '';
             }
@@ -462,7 +495,6 @@ function getAccountTypeText($accountType) {
 
         function calculateSurcharge() {
             var arrears = parseFloat(document.getElementById('arrears').value);
-            
             if (!isNaN(arrears)) {
                 var surcharge = arrears * 0.10;
 
@@ -475,13 +507,16 @@ function getAccountTypeText($accountType) {
         }
 
         function calculateDiscount() {
+            var totalBilling = parseFloat(document.getElementById('billing_amount').value)
             var totalAmount = parseFloat(document.getElementById('total').value);
             var discountType = document.getElementById('discount_type').value;
             var discountAmountInput = document.getElementById('discount_amount');
             var discountedTotalInput = document.getElementById('discounted_total');
+            var discountedBillingInput = document.getElementById('discounted_billing');
 
             let discount = 0;
             let discountedTotal = totalAmount;
+            let discountedBilling = totalBilling;
 
             if (discountType === "Senior" || discountType === "PWD") {
                 discount = totalAmount * 0.05;
@@ -492,12 +527,14 @@ function getAccountTypeText($accountType) {
             }
 
             discountedTotal = totalAmount - discount;
+            discountedBilling = totalBilling - discount;
 
             discountAmountInput.value = discount.toFixed(2);
             discountedTotalInput.value = discountedTotal.toFixed(2);
+            discountedBillingInput.value = discountedBilling.toFixed(2);
         }
 
-        document.getElementById('consumption').addEventListener('input', fetchPrice);
+        // document.getElementById('consumption').addEventListener('input', fetchPrice);
         document.getElementById('present_reading').addEventListener('input', updateConsumption);
         document.getElementById('previous_reading').addEventListener('input', updateConsumption);
         document.getElementById('arrears').addEventListener('input', calculateSurcharge);
@@ -505,6 +542,6 @@ function getAccountTypeText($accountType) {
 
         calculateTotal();
     });
-</script> -->
+</script>
 
 <?php include('includes/footer.php') ?>

@@ -25,7 +25,17 @@ function getAllClientsAsc() {
 function getBilling()
 {
     global $conn;
-    $query = "SELECT billing.*, IFNULL(billing.remaining_balance, billing.discounted_total) as r_balance, clients.account_name, clients.account_num, clients.zone
+    // $query = "SELECT billing.*, IFNULL(billing.remaining_balance, billing.discounted_total) as r_balance, clients.account_name, clients.account_num, clients.zone, clients.account_type, clients.status
+    //         FROM billing
+    //         JOIN clients ON billing.client_id = clients.client_id";
+    $query = "SELECT billing.*, 
+                IFNULL(billing.remaining_balance, billing.discounted_total) AS r_balance, 
+                clients.account_name, 
+                clients.account_num, 
+                clients.zone, 
+                clients.account_type, 
+                clients.status AS client_status,       -- alias clients.status
+                billing.status AS billing_status       -- alias billing.status explicitly
             FROM billing
             JOIN clients ON billing.client_id = clients.client_id";
     $query_run = mysqli_query($conn, $query);
