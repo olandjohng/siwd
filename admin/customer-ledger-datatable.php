@@ -68,43 +68,68 @@ include('../middleware/adminMiddleware.php');
                 </thead>
                 <tbody>
                     <?php
+                        // $data = getCombinedHistory($client_id);
+
+                        // if ($data && count($data) > 0) {
+                        //     // Sort the data by date
+                        //     usort($data, function($a, $b) {
+                        //         $dateA = isset($a['reading_date']) ? strtotime($a['reading_date']) : strtotime($a['payment_date']);
+                        //         $dateB = isset($b['reading_date']) ? strtotime($b['reading_date']) : strtotime($b['payment_date']);
+                        //         return $dateA - $dateB;
+                        //     });
+
                         $data = getCombinedHistory($client_id);
 
-                        if ($data && count($data) > 0) {
-                            // Sort the data by date
-                            usort($data, function($a, $b) {
-                                $dateA = isset($a['reading_date']) ? strtotime($a['reading_date']) : strtotime($a['payment_date']);
-                                $dateB = isset($b['reading_date']) ? strtotime($b['reading_date']) : strtotime($b['payment_date']);
-                                return $dateA - $dateB;
+                        if (is_array($data) && count($data) > 0) {
+                            // Sort the $data array
+                            usort($data, function ($a, $b) {
+                                $dateA = isset($a['reading_date']) 
+                                    ? strtotime($a['reading_date']) 
+                                    : (isset($a['payment_date']) ? strtotime($a['payment_date']) : 0);
+
+                                $dateB = isset($b['reading_date']) 
+                                    ? strtotime($b['reading_date']) 
+                                    : (isset($b['payment_date']) ? strtotime($b['payment_date']) : 0);
+
+                                return $dateA <=> $dateB;
                             });
 
-                            // Display the sorted data
+
                             foreach ($data as $row) {
-                                // Common fields
-                                $or_num = htmlspecialchars($row['or_num']);
-                                $billing_num = htmlspecialchars($row['billing_num']);
-                                $account_num = htmlspecialchars($row['account_num']);
-                                $name = htmlspecialchars($row['account_name']);
+                                $or_num = isset($row['or_num']) ? htmlspecialchars($row['or_num']) : '';
+                                $billing_num = isset($row['billing_num']) ? htmlspecialchars($row['billing_num']) : '';
+                                $account_num = isset($row['account_num']) ? htmlspecialchars($row['account_num']) : '';
+                                $name = isset($row['account_name']) ? htmlspecialchars($row['account_name']) : '';
+
                                 $date = isset($row['reading_date']) 
                                     ? htmlspecialchars(date('M d Y', strtotime($row['reading_date']))) 
-                                    : htmlspecialchars(date('M d Y', strtotime($row['payment_date'])));
+                                    : (isset($row['payment_date']) ? htmlspecialchars(date('M d Y', strtotime($row['payment_date']))) : '');
 
-                                $purpose = htmlspecialchars($row['purpose']);
-                                $previous = htmlspecialchars($row['previous_reading']);
-                                $present = htmlspecialchars($row['present_reading']);
-                                $consumption = $row['consumption'];
-                                $billing_amount = $row['billing_amount'];
-                                $wqi_fee = $row['wqi_fee'];
-                                $wm_fee = $row['wm_fee'];
-                                $discount_amount = $row['discount_amount'];
-                                $total = $row['discounted_total'];
-                                $payment_purpose = htmlspecialchars($row['payment_purpose']);
+                                $purpose = isset($row['purpose']) ? htmlspecialchars($row['purpose']) : '';
+                                $previous = isset($row['previous_reading']) ? htmlspecialchars($row['previous_reading']) : '';
+                                $present = isset($row['present_reading']) ? htmlspecialchars($row['present_reading']) : '';
+                                $consumption = isset($row['consumption']) ? $row['consumption'] : '';
+                                $billing_amount = isset($row['billing_amount']) ? $row['billing_amount'] : '';
+                                $wqi_fee = isset($row['wqi_fee']) ? $row['wqi_fee'] : '';
+                                $wm_fee = isset($row['wm_fee']) ? $row['wm_fee'] : '';
+                                $discount_amount = isset($row['discount_amount']) ? $row['discount_amount'] : '';
+                                $total = isset($row['discounted_total']) ? $row['discounted_total'] : '';
+                                $payment_purpose = isset($row['payment_purpose']) ? htmlspecialchars($row['payment_purpose']) : '';
                                 
-                                if ($row['status'] === 'Partially Paid') {
+                                // echo '<pre>'; print_r($row); echo '</pre>';
+                                if (
+                                    isset($row['payment_type']) && 
+                                    $row['payment_type'] === 'payments' &&
+                                    isset($row['amount_received'], $row['amount_due']) &&
+                                    floatval($row['amount_received']) < floatval($row['amount_due'])
+                                ) {
                                     $amount = htmlspecialchars($row['amount_received']);
                                 } else {
-                                    $amount = htmlspecialchars($row['amount_due']);
+                                    $amount = isset($row['amount_due']) ? htmlspecialchars($row['amount_due']) : '';
                                 }
+
+
+
                     ?>
                     <tr>
                         <td><?= $date; ?></td>

@@ -1,5 +1,5 @@
 <?php
-include('../middleware/adminMiddleware.php');
+include('../middleware/cashierMiddleware.php');
 include('includes/header.php');
 
 $users = getAll('users');
