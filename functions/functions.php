@@ -225,6 +225,8 @@ function getBillingHistory($id)
     return $billingHistory;
 }
 
+
+
 function getStatusHistory($client_id)
 {
     global $conn;
@@ -280,30 +282,63 @@ function getStatusHistory($client_id)
 //     return $paymentHistory;
 // }
 
+
 function getPaymentHistory($id)
 {
     global $conn;
-    $query = "
-        SELECT 
-            payments.or_num, 
-            payments.payment_purpose, 
-            payments.amount_due, 
-            payments.payment_date, 
-            'payments' AS payment_type 
-        FROM payments
-        JOIN billing ON payments.billing_id = billing.billing_id
-        WHERE billing.client_id = $id
-        UNION ALL
-        SELECT 
-            other_payments.or_num, 
-            other_payments.payment_purpose, 
-            other_payments.amount_due, 
-            other_payments.payment_date, 
-            'other_payments' AS payment_type 
-        FROM other_payments
-        WHERE other_payments.client_id = $id
-        ORDER BY payment_date DESC";
-    
+    // $query = "
+    //     SELECT 
+    //         payments.or_num, 
+    //         payments.payment_purpose, 
+    //         payments.amount_due, 
+    //         payments.payment_date,
+    //         payments.amount_received,
+    //         billing.status
+    //         'payments' AS payment_type
+    //     FROM payments
+    //     JOIN billing ON payments.billing_id = billing.billing_id
+    //     WHERE billing.client_id = $id
+    //     UNION ALL
+    //     SELECT 
+    //         other_payments.or_num, 
+    //         other_payments.payment_purpose, 
+    //         other_payments.amount_due, 
+    //         other_payments.payment_date,
+    //         NULL AS amount_received,
+    //         NULL AS status,
+    //         'other_payments' AS payment_type 
+    //     FROM other_payments
+    //     WHERE other_payments.client_id = $id
+    //     ORDER BY payment_date DESC";
+        $query = "
+            SELECT 
+                payments.or_num, 
+                payments.payment_purpose, 
+                payments.amount_due, 
+                payments.amount_received,
+                payments.payment_date, 
+                billing.status,
+                'payments' AS payment_type 
+            FROM payments
+            JOIN billing ON payments.billing_id = billing.billing_id
+            WHERE billing.client_id = $id
+
+            UNION ALL
+
+            SELECT 
+                other_payments.or_num, 
+                other_payments.payment_purpose, 
+                other_payments.amount_due, 
+                NULL AS amount_received,  -- Aligns with payments.amount_received
+                other_payments.payment_date, 
+                NULL AS status,           -- Aligns with billing.status
+                'other_payments' AS payment_type 
+            FROM other_payments
+            WHERE other_payments.client_id = $id
+
+            ORDER BY payment_date DESC
+        ";
+
     $query_run = mysqli_query($conn, $query);
 
     $paymentHistory = array();
@@ -319,16 +354,39 @@ function getPaymentHistory($id)
     return $paymentHistory;
 }
 
+// function getCombinedHistory($client_id) {
+//     $billingHistory = getBillingHistory($client_id);
+//     $paymentHistory = getPaymentHistory($client_id);
+
+//     // Combine both arrays
+//     $combinedHistory = array_merge($billingHistory, $paymentHistory);
+
+//     // Sort combined history by date
+//     usort($combinedHistory, function ($a, $b) {
+//         return strtotime($a['date']) - strtotime($b['date']);
+//     });
+
+//     return $combinedHistory;
+// }
+
 function getCombinedHistory($client_id) {
     $billingHistory = getBillingHistory($client_id);
     $paymentHistory = getPaymentHistory($client_id);
 
-    // Combine both arrays
+    if (!is_array($billingHistory)) $billingHistory = [];
+    if (!is_array($paymentHistory)) $paymentHistory = [];
+
     $combinedHistory = array_merge($billingHistory, $paymentHistory);
 
-    // Sort combined history by date
+    // Safe sort
     usort($combinedHistory, function ($a, $b) {
-        return strtotime($a['date']) - strtotime($b['date']);
+        $dateA = isset($a['reading_date']) 
+            ? strtotime($a['reading_date']) 
+            : (isset($a['payment_date']) ? strtotime($a['payment_date']) : 0);
+        $dateB = isset($b['reading_date']) 
+            ? strtotime($b['reading_date']) 
+            : (isset($b['payment_date']) ? strtotime($b['payment_date']) : 0);
+        return $dateA <=> $dateB;
     });
 
     return $combinedHistory;

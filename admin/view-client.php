@@ -145,34 +145,43 @@ $client_data = mysqli_fetch_assoc($result);
                         <tr>
                             <th class="border-bottom">OR #</th>
                             <th class="border-bottom">Payment Purpose</th>
-                            <th class="border-bottom">Amount Due</th>
+                            <th class="border-bottom">Amount</th>
                             <th class="border-bottom">Payment Date</th>
                             <th class="border-bottom"></th>
                         </tr>
                     </thead>
                     <tbody>
-                    <?php
-                        $data = getPaymentHistory($client_id);
+                        <?php
+                            $data = getPaymentHistory($client_id);
 
-                        if ($data) {
-                            foreach ($data as $payment) {
-                                ?>
-                        <tr>
-                            <td><?= $payment['or_num']; ?></td>
-                            <td><?= $payment['payment_purpose']; ?></td>
-                            <td><?= $payment['amount_due']; ?></td>
-                            <td><?= date('M d, Y', strtotime($payment['payment_date'])); ?></td>
-                            <!-- <td>
-                                <a href="#" class="btn btn-sm btn-light btn-active-light-primary">View</a>
-                            </td> -->
-                        </tr>
-                            <?php
+                            if ($data) {
+                                foreach ($data as $payment) {
+                                    // Determine if the payment is partial based on amount_received and amount_due
+                                    if (
+                                        isset($payment['payment_type']) &&
+                                        $payment['payment_type'] === 'payments' &&
+                                        isset($payment['amount_received'], $payment['amount_due']) &&
+                                        floatval($payment['amount_received']) < floatval($payment['amount_due'])
+                                    ) {
+                                        $amount = htmlspecialchars($payment['amount_received']);
+                                    } else {
+                                        $amount = isset($payment['amount_due']) ? htmlspecialchars($payment['amount_due']) : '';
+                                    }
+                                    ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($payment['or_num']); ?></td>
+                                        <td><?= htmlspecialchars($payment['payment_purpose']); ?></td>
+                                        <td><?= $amount; ?></td>
+                                        <td><?= date('M d, Y', strtotime($payment['payment_date'])); ?></td>
+                                    </tr>
+                                    <?php
                                 }
                             } else {
-                                echo "<tr><td colspan='5'>No billing found for given client ID.</></tr>";
+                                echo "<tr><td colspan='4'>No billing found for given client ID.</td></tr>";
                             }
                         ?>
                     </tbody>
+
                 </table>
             </div>
         </div>
