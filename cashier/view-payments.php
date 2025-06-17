@@ -1,6 +1,8 @@
 <?php
 include('../middleware/cashierMiddleware.php');
 include('includes/header.php');
+
+// ALTER TABLE siwd.payments ADD tax DECIMAL(10,2) DEFAULT 0 NULL;
 ?>
 <style>
     #receiptContent {
@@ -73,6 +75,9 @@ if (isset($_GET['id']) && isset($_GET['source'])) {
     $source = $_GET['source'];
 
     $paymentId = getPaymentId($payment_id, $source);
+    // echo "<pre>";
+    // print_r($paymentId);
+    // echo "</pre>";
 
     if ($paymentId) {
 ?>
@@ -133,7 +138,7 @@ if (isset($_GET['id']) && isset($_GET['source'])) {
                     <?php if ($source === 'payment') { ?>
                     <tr>
                         <td class="left strong">Bill Amount</td>
-                        <td class="right">₱ <?= htmlspecialchars($paymentId['billing_amount']); ?></td>
+                        <td class="right">₱ <?= htmlspecialchars($paymentId['bill_amount']); ?></td>
                     </tr>
                     <tr>
                         <td class="left strong">Arrears</td>
@@ -145,11 +150,11 @@ if (isset($_GET['id']) && isset($_GET['source'])) {
                     </tr>
                     <tr>
                         <td class="left strong">Water Quality Improvement</td>
-                        <td class="right">₱ <?= htmlspecialchars($paymentId['wqi_fee']); ?></td>
+                        <td class="right">₱ <?= htmlspecialchars($paymentId['water_qty_improvement']); ?></td>
                     </tr>
                     <tr>
                         <td class="left strong">Water Management</td>
-                        <td class="right">₱ <?= htmlspecialchars($paymentId['wm_fee']); ?></td>
+                        <td class="right">₱ <?= htmlspecialchars($paymentId['water_management']); ?></td>
                     </tr>
                     <tr>
                         <td class="left strong">Materials Fee</td>
@@ -160,7 +165,6 @@ if (isset($_GET['id']) && isset($_GET['source'])) {
                         <td class="right">₱ <?= htmlspecialchars($paymentId['installation_fee']); ?></td>
                     </tr>
                     <?php } else if ($source === 'other_payment') { ?>
-                    
                     <tr>
                         <td class="left strong">Amount Due</td>
                         <td class="right">₱ <?= htmlspecialchars($paymentId['amount_due']); ?></td>
@@ -209,7 +213,7 @@ if (isset($_GET['id']) && isset($_GET['source'])) {
                                 <strong>Total</strong>
                             </td>
                             <td class="right text-end">
-                                <strong>₱ <?= htmlspecialchars($paymentId['discounted_total']); ?></strong>
+                                <strong>₱ <?= htmlspecialchars($paymentId['subtotal'] + $paymentId['tax']); ?></strong>
                             </td>
                         </tr>
                     </tbody>
@@ -231,15 +235,15 @@ if (isset($_GET['id']) && isset($_GET['source'])) {
             </tr>
             <tr>
                 <td colspan="2">Current</td>
-                <td class="text-end"><?= htmlspecialchars($paymentId['billing_amount']); ?></td>
+                <td class="text-end"><?= htmlspecialchars($paymentId['bill_amount']); ?></td>
             </tr>
             <tr>
                 <td colspan="2">WQI Fee:</td>
-                <td class="text-end"><?= htmlspecialchars($paymentId['wqi_fee']); ?></td>
+                <td class="text-end"><?= htmlspecialchars($paymentId['water_qty_improvement']); ?></td>
             </tr>
             <tr>
                 <td colspan="2">WM Fee:</td>
-                <td class="text-end"><?= htmlspecialchars($paymentId['wm_fee']); ?></td>
+                <td class="text-end"><?= htmlspecialchars($paymentId['water_management']); ?></td>
             </tr>
             <tr>
                 <td colspan="2">Arrears:</td>
@@ -263,7 +267,7 @@ if (isset($_GET['id']) && isset($_GET['source'])) {
             </tr>
             <tr>
                 <td colspan="2"></td>
-                <td class="text-end"><?= htmlspecialchars($paymentId['discounted_total']); ?></td>
+                <td class="text-end fw-bolder"><?= htmlspecialchars($paymentId['subtotal'] + $paymentId['tax']); ?></td>
             </tr>
         <?php } else if ($source === 'other_payment') { ?>
             <tr>

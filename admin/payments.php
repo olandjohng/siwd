@@ -96,6 +96,14 @@ $payments = getPayment();
                                         <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path>
                                     </svg>
                                 </a>
+                                
+                                <!-- <a href="view-payments.php?id=<?= $id; ?>&source=<?= $row['source']; ?>" target="_blank" title="Print Receipt">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer" viewBox="0 0 16 16">
+                                        <path d="M2 7a2 2 0 0 0-2 2v3a1 1 0 0 0 1 1h1v2a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-2h1a1 1 0 0 0 1-1V9a2 2 0 0 0-2-2H2zm11 8H3v-4h10v4z"/>
+                                        <path d="M5 1a1 1 0 0 0-1 1v4h8V2a1 1 0 0 0-1-1H5zm0 5V2h6v4H5z"/>
+                                    </svg>
+                                </a> -->
+
                                 <button class="btn btn-link text-dark" type="button" name="delete_payment_btn" onclick="confirmDelete(<?= $id; ?>)">
                                     <svg class="icon icon-xs text-danger ms-1" title="" data-bs-toggle="tooltip" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" data-bs-original-title="Delete" aria-label="Delete">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
@@ -152,4 +160,6 @@ $payments = getPayment();
         })
     }
 </script>
+
+
 <?php include('includes/footer.php') ?>

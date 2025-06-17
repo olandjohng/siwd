@@ -2,7 +2,6 @@
 include('../middleware/cashierMiddleware.php');
 include('includes/header.php');
 
-$payments = getPayment();
 ?>
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
@@ -38,34 +37,52 @@ $payments = getPayment();
                     <th class="border-bottom" scope="col">OR No.</th>
                     <th class="border-bottom" scope="col">Payor</th>
                     <th class="border-bottom" scope="col">Payment Date</th>
-                    <th class="border-bottom" scope="col">Method</th>
+                    <th class="border-bottom" scope="col">Payment For</th>
                     <th class="border-bottom" scope="col">Amount</th>
                 </tr>
             </thead>
+
             <tbody>
                 <?php
-                    if($payments && count($payments) > 0) {
-                        foreach($payments as $row){
-                            $or_num = $row['or_num'];
-                            $account_num = $row['account_num'];
-                            $name = $row['account_name'];
-                            $payment_date = date('M d Y', strtotime($row['payment_date']));
-                            $amount = $row['discounted_total'];
-                            $payment_method = $row['payment_method'];
-                            $arrears = $row['arrears'];
-                            $surcharge = $row['surcharge'];
-                            $wqi_fee = $row['wqi_fee'];
-                            $wm_fee = $row['wm_fee'];
-                            $installation_fee = $row['installation_fee'];
-                            $materials_fee = $row['materials_fee'];
-                            $tax = $row['tax'];
+                    $payments = getPayment();
+
+                    if ($payments && count($payments) > 0) {
+                        // Sort by payment_date descending (latest first)
+                        usort($payments, function($a, $b) {
+                            return strtotime($b['payment_date']) <=> strtotime($a['payment_date']);
+                        });
+
+                        // Limit to latest 10
+                        foreach (array_slice($payments, 0, 10) as $row) {
+                            $name = htmlspecialchars($row['account_name']);
+                            $or_num = htmlspecialchars($row['or_num']);
+                            $payment_date = htmlspecialchars(date('M d Y', strtotime($row['payment_date'])));
                             
+                            // Check the source to determine which table the data came from
+                            if ($row['source'] === 'payment') {
+                                $id = htmlspecialchars($row['payment_id']); 
+                                $payment_method = htmlspecialchars($row['payment_method']);
+                                $payment_purpose = htmlspecialchars($row['payment_purpose']);
+                                $amount = ($row['status'] === 'Partially Paid')
+                                    ? htmlspecialchars($row['amount_received'])
+                                    : htmlspecialchars($row['amount']);
+                            } else if ($row['source'] === 'other_payment') {
+                                $id = htmlspecialchars($row['payment_id']); 
+                                $payment_method = 'N/A';
+                                $payment_purpose = htmlspecialchars($row['payment_purpose']);
+                                $amount = htmlspecialchars($row['amount']);
+                            } else if ($row['source'] === 'refund_payment') {
+                                $id = htmlspecialchars($row['payment_id']);
+                                $payment_method = 'N/A';
+                                $payment_purpose = htmlspecialchars($row['payment_purpose']);
+                                $amount = htmlspecialchars($row['amount']);
+                            }
                 ?>
                 <tr>
                     <td><?= $or_num; ?></td>
                     <td><?= $name; ?></td>
                     <td><?= $payment_date; ?></td>
-                    <td><?= $payment_method; ?></td>
+                    <td><?= $payment_purpose; ?></td>
                     <td><?= $amount; ?></td>
                 </tr>
                 <?php
@@ -75,6 +92,7 @@ $payments = getPayment();
                     }
                 ?>
             </tbody>
+
         </table>        
     </div>
 </div>

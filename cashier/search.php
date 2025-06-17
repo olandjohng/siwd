@@ -6,15 +6,37 @@ require_once '../config/db-con.php';
 
 $searchQuery = isset($_GET['query']) ? $_GET['query'] : '';
 
-$sql = "SELECT clients.*, billing.billing_amount, billing.wqi_fee, billing.wm_fee, billing.present_reading, billing.status
-        FROM clients
+// $sql = "SELECT clients.*, billing.billing_amount, billing.wqi_fee, billing.wm_fee, billing.present_reading, billing.status
+//         FROM clients
+//         LEFT JOIN (
+//             -- SELECT client_id, MAX(reading_date) AS max_reading_date
+//             SELECT client_id, MAX(due_date) AS max_reading_date
+//             FROM billing
+//             GROUP BY client_id
+//         ) AS latest_billing ON clients.client_id = latest_billing.client_id
+//         LEFT JOIN billing ON billing.client_id = clients.client_id AND billing.due_date = latest_billing.max_reading_date
+//         WHERE clients.account_name LIKE '%" . $conn->real_escape_string($searchQuery) ."%' OR clients.account_num LIKE '%" . $conn->real_escape_string($searchQuery) . "%'";
+
+
+$sql = "SELECT DISTINCT c.*, (b.billing_amount + b.arrears) as billing_amount, b.wqi_fee, b.wm_fee, b.present_reading, b.status,
+        (
+            IFNULL(b.discounted_billing, 0) 
+            + IFNULL(b.wqi_fee, 0) 
+            + IFNULL(b.wm_fee, 0) 
+            + IFNULL(b.tax, 0)
+            - IFNULL(p.balance, 0)
+        ) as balance
+
+        FROM clients c
+        LEFT JOIN billing b on b.client_id = c.client_id 
+        and b.due_date = (
+            SELECT max(due_date) FROM billing d WHERE d.client_id = b.client_id 
+        )
         LEFT JOIN (
-            SELECT client_id, MAX(reading_date) AS max_reading_date
-            FROM billing
-            GROUP BY client_id
-        ) AS latest_billing ON clients.client_id = latest_billing.client_id
-        LEFT JOIN billing ON billing.client_id = clients.client_id AND billing.reading_date = latest_billing.max_reading_date
-        WHERE clients.account_name LIKE '%" . $conn->real_escape_string($searchQuery) ."%' OR clients.account_num LIKE '%" . $conn->real_escape_string($searchQuery) . "%'";
+            SELECT billing_id, sum(amount_received) as balance from payments group by billing_id 
+        ) p on p.billing_id = b.billing_id 
+        WHERE c.account_name LIKE '%" . $conn->real_escape_string($searchQuery) ."%' OR c.account_num LIKE '%". $conn->real_escape_string($searchQuery) ."%'
+        ";
 
 
 $result = $conn->query($sql);
@@ -33,7 +55,7 @@ if(mysqli_num_rows($result) > 0){?>
                 $wm_fee = $row['wm_fee'];
                 $status = $row['status'];
                 $present_reading = $row['present_reading'];
-
+                $balance = $row['balance'];
                 switch($account_type) {
                     case '1':
                         $accountTypeValue = 'Residential';
@@ -43,6 +65,9 @@ if(mysqli_num_rows($result) > 0){?>
                         break;
                     case '3':
                         $accountTypeValue = 'Commercial';
+                        break;
+                    case '4':
+                        $accountTypeValue = 'Government';
                         break;
                     default:
                         $accountTypeValue = '';
@@ -58,7 +83,7 @@ if(mysqli_num_rows($result) > 0){?>
                 }
                 ?>
 
-                <tr class="search-result" data-client-id="<?= $client_id; ?>" data-account-num="<?= $account_num; ?>" data-account-name="<?= $account_name; ?>" data-account-type="<?= $accountTypeValue; ?>" data-billing-amount="<?= $billing_amount; ?>" data-wqi-fee="<?= $wqi_fee; ?>" data-wm-fee="<?= $wm_fee; ?>" data-present-reading="<?= $present_reading; ?>" data-status="<?= $status; ?>">
+                <tr class="search-result" data-client-id="<?= $client_id; ?>" data-account-num="<?= $account_num; ?>" data-account-name="<?= $account_name; ?>" data-account-type="<?= $accountTypeValue; ?>" data-billing-amount="<?= $billing_amount; ?>" data-wqi-fee="<?= $wqi_fee; ?>" data-wm-fee="<?= $wm_fee; ?>" data-balance="<?= $balance ?>" data-present-reading="<?= $present_reading; ?>" data-status="<?= $status; ?>">
                     <td><?= $account_num; ?></td>
                     <td><?= $account_name; ?></td>
                     <td><?= $accountTypeValue; ?></td>

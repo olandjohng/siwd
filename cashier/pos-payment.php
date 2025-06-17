@@ -5,7 +5,7 @@ include('../middleware/cashierMiddleware.php');
 <head>
     <link rel="stylesheet" type="text/css" href="assets/css/pos.css">
 </head>
-<body>
+<body onload="window.print();">
     <div class="container">
         <?php
             if(isset($_GET['id'])) {

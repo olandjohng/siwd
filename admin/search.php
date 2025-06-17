@@ -19,7 +19,14 @@ $searchQuery = isset($_GET['query']) ? $_GET['query'] : '';
 
 
 $sql = "SELECT DISTINCT c.*, (b.billing_amount + b.arrears) as billing_amount, b.wqi_fee, b.wm_fee, b.present_reading, b.status,
-        (b.total - p.balance) as balance
+        (
+            IFNULL(b.discounted_billing, 0) 
+            + IFNULL(b.wqi_fee, 0) 
+            + IFNULL(b.wm_fee, 0) 
+            + IFNULL(b.tax, 0)
+            - IFNULL(p.balance, 0)
+        ) as balance
+
         FROM clients c
         LEFT JOIN billing b on b.client_id = c.client_id 
         and b.due_date = (

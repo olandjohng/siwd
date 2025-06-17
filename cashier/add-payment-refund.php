@@ -13,7 +13,7 @@ include('includes/header.php');
                 <li class="breadcrumb-item">
                     <a href="../admin/payments.php">Transactions</a>
                 </li>
-                <li class="breadcrumb-item active" aria-current="page">Add Other Payment</li>
+                <li class="breadcrumb-item active" aria-current="page">Add Refund Payment</li>
             </ol>
         </nav>
     </div>
@@ -25,7 +25,7 @@ include('includes/header.php');
             <div class="row">
                 <div class="col-lg-9 card-body">
                     <h4 class="mb-2">Add Payment</h4>
-                    
+
                     <?php
                         $latest_payment_query = "SELECT or_num FROM payments ORDER BY or_num DESC LIMIT 1";
                         $latest_payment_result = mysqli_query($conn, $latest_payment_query);
@@ -64,27 +64,16 @@ include('includes/header.php');
 
                     <form action="code.php" method="POST">
                         <div class="row g-3">
-                            <div class="col-md-9 mb-3">
+                            <div class="col-md-12 mb-3">
                                 <div>
                                     <label for="account_name">Account Name</label>
-                                    <input type="text" class="form-control" name="account_name" id="account_name">
-                                    <input type="hidden" id="client_id" name="client_id">
+                                    <input type="text" class="form-control" name="account_name" id="account_name" required>
                                 </div>
-                                <div id="search-results"></div>
                             </div>
                             
-                            <div class="col-md-3 mb-3">
-                                <label for="account_num">Acct No.</label>
-                                <input type="text" class="form-control" name="account_num" id="account_num">
-                            </div>
                             <div class="col-12 mb-3">
                                 <label for="payment_method">Payment Purpose</label>
-                                <select name="payment_purpose" id="payment_purpose" class="form-select">
-                                    <option value="Installation">Installation</option>
-                                    <option value="Reconnection">Reconnection</option>
-                                    <option value="Transfer Meter">Transfer Meter</option>
-                                    <option value="Change Name">Change Name</option>
-                                </select>
+                                <input type="text" class="form-control" name="payment_purpose" id="payment_purpose" value="Refund" readonly>
                             </div>
                         </div>
     
@@ -143,9 +132,13 @@ include('includes/header.php');
                                         <table class="table">
                                             <tbody>
                                                 <tr>
-                                                    <th>Payment Purpose</th>
-                                                    <td id="paymentPurposePreview"></td>
+                                                    <th>Account Name</th>
+                                                    <td id="accountNamePreview"></td>
                                                 </tr>  
+                                                <tr>
+                                                    <th>Purpose:</th>
+                                                    <td id="paymentPurposePreview"></td>
+                                                </tr>
                                                 <tr>
                                                     <th>Total Amount Due:</th>
                                                     <td id="totalAmountDuePreview"></td>
@@ -166,7 +159,7 @@ include('includes/header.php');
                                         </table>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="submit" class="btn btn-primary" name="add_otherpayment_btn">Submit Payment</button>
+                                        <button type="submit" class="btn btn-primary" name="add_refundpayment_btn">Submit Payment</button>
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                     </div>
                                 </div>
@@ -244,7 +237,8 @@ include('includes/header.php');
     $(document).ready(function() {
         $('#previewButton').click(function() {
             
-            $('#paymentPurposePreview').text($('#payment_purpose option:selected').val()); //sample for dropdown
+            $('#accountNamePreview').text($('#account_name').val());
+            $('#paymentPurposePreview').text($('#payment_purpose').val());
             $('#totalAmountDuePreview').text($('#amount_due').val());
             $('#paymentAmountPreview').text($('#payment_amount').val());
             $('#changePreview').text($('#change').val());

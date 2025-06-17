@@ -177,7 +177,7 @@ include('includes/header.php');
 
                 <h2 class="h5 my-4">Tax & Total</h2>
                 <div class="row">
-                    <input type="text" id="subtotal" name="subtotal">
+                    <input type="text" id="subtotal" name="subtotal" style="display: none;">
                     <div class="col-sm-6 mb-3">
                         <div class="form-group">
                             <label for="tax">Franchise Tax</label>
@@ -445,6 +445,11 @@ include('includes/header.php');
 
             if (discountType === "Senior" || discountType === "PWD") {
                 discount = totalAmount * 0.05;
+
+                if (discount > 36.55) {
+                    discount = 36.55;
+                }
+                
             } else if (discountType === "Employee") {
                 discount = 337;
             } else {

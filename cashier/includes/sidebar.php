@@ -79,7 +79,7 @@
                                         </span>
                                     </a>
                                 </li> -->
-                                <!-- <li class="nav-item">
+                                <li class="nav-item">
                                     <span class="nav-link d-flex justify-content-between align-items-center" data-toggle="collapse" data-target="#submenu-reports" aria-expanded="false">
                                         <span>
                                             <span class="sidebar-icon">
@@ -104,15 +104,15 @@
                                                     <span class="sidebar-text">Collection Report</span>
                                                 </a>
                                             </li>
-                                            <li class="nav-item">
+                                            <!-- <li class="nav-item">
                                                 <a href="billing-report.php" class="nav-link">
                                                     <span class="sidebar-text-contracted">B</span>
                                                     <span class="sidebar-text">Billing Report</span>
                                                 </a>
-                                            </li>
+                                            </li> -->
                                         </ul>
                                     </div>
-                                </li> -->
+                                </li>
                             </ul>
                         </div>
                     </div>
