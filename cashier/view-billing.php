@@ -194,18 +194,18 @@ include('includes/header.php');
             }
         ?>
     </div>
-    <!-- <div class="col-xl-3 col-md-4 col-12">
+    <div class="col-xl-3 col-md-4 col-12">
         <div class="card shadow border-0">
-            <div class="card-body">
-                <button class="btn btn-secondary d-grid w-100 mb-3 export-pdf" onclick="exportBilling('pdf')"> Export </button>
-                <a class="btn btn-secondary d-grid w-100 mb-3" href="pos-billing.php?id=<?= $billing['billing_id']; ?>"> Print </a>
+            <!-- <div class="card-body">
+                <button class="btn btn-primary d-grid w-100 mb-3" onclick="exportBillingAsPDF(<?= $billing['billing_id']; ?>)">
+                    Export as PDF
+                </button>
+                <button class="btn btn-secondary d-grid w-100 mb-3 export-pdf" onclick="window.open('pos-billing.php?id=<?= $billing['billing_id']; ?>', '_blank', 'width=400,height=600');"> Print </button>
                 <a class="btn btn-primary d-grid w-100 mb-3" href="update-billing.php?id=<?= $billing['billing_id']; ?>"> Edit Billing </a>
-            </div>
+            </div> -->
         </div>
-    </div> -->
+    </div>
 </div>
-
-
 
 
 <?php include('includes/footer.php') ?>

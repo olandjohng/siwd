@@ -39,8 +39,9 @@ include('../middleware/adminMiddleware.php');
                 if($billing) {
         ?>
         <div class="receipt_header">
+            <img src="assets/img/siwd-logo.png" alt="Logo" style="max-width: 100px; height: auto;">
             <h1>San Isidro Water District</h1>
-            <h2>Address: Gov Ave. Batobato, Poblacion
+            <h2>Gov Ave. Batobato, San Isidro, Davao Oriental
                 <span>Tel: +63990933455</span>
             </h2>
             <br>
